@@ -30,6 +30,7 @@
     "downshift": "^3.4.2",
     "fg-loadcss": "^2.1.0",
     "formik": "^2.0.6",
+    "http-proxy-middleware": "^1.0.3",
     "json2mq": "^0.2.0",
     "jsonwebtoken": "^8.5.1",
     "jss-rtl": "^0.3.0",

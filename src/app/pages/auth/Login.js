@@ -28,7 +28,7 @@ function Login(props) {
 
   return (
     <>
-      <LoginLayout heading="Sign to Kodeon">
+      <LoginLayout heading="Sign to Suits">
         <Formik
           initialValues={{
             email: "",
@@ -65,11 +65,8 @@ function Login(props) {
                 .then((res) => {
                   console.log('res', res)
                   disableLoading();
-                  if (res.data.multiFactorAuth) {
-                    history.push('/auth/multiFactorAuth')
-                  } else {
-                    props.login(res.data.authToken);
-                  }
+                  props.login(res.data.authToken);
+                  props.fulfillUser(res.data.user)
                 })
                 .catch(() => {
                   disableLoading();
@@ -119,12 +116,6 @@ function Login(props) {
                 />
               </div>
               <div className="row kt-login__extra">
-                <div className="col">
-                  <label className="kt-checkbox">
-                    <input type="checkbox" name="remember" /> Remember me
-                    <span></span>
-                  </label>
-                </div>
                 <div className="col kt-align-right">
                   <Link to="/auth/forgot-password" className="kt-login__link">
                     Forget Password ?

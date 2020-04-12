@@ -1,8 +1,8 @@
 import axios from "axios";
 
-export const LOGIN_URL = "api/auth/login";
+export const LOGIN_URL = "/api/auth/login";
 export const LOGIN_WITH_CODE_URL = "api/auth/loginWithCode";
-export const REGISTER_URL = "api/auth/register";
+export const REGISTER_URL = "/api/auth/register";
 export const REQUEST_PASSWORD_URL = "api/auth/forgot-password";
 export const CHANGE_PASSWORD_URL = "api/auth/change-password";
 export const CLOSE_ACCOUNT_URL = "api/auth/close-account";

@@ -56,22 +56,9 @@ export const actions = {
     payload: { authToken }
   }),
   logout: () => ({ type: actionTypes.Logout }),
-  requestUser: user => ({ type: actionTypes.UserRequested, payload: { user } }),
   fulfillUser: user => ({ type: actionTypes.UserLoaded, payload: { user } })
 };
 
 export function* saga() {
-  yield takeLatest(actionTypes.Login, function* loginSaga() {
-    yield put(actions.requestUser());
-  });
 
-  yield takeLatest(actionTypes.Register, function* registerSaga() {
-    yield put(actions.requestUser());
-  });
-
-  yield takeLatest(actionTypes.UserRequested, function* userRequested() {
-    const { data: user } = yield getUserByToken();
-
-    yield put(actions.fulfillUser(user));
-  });
 }

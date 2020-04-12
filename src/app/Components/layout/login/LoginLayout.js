@@ -16,7 +16,7 @@ const LoginLayout = ({children, heading}) => {
               <div className="kt-grid__item kt-grid__item--fluid kt-login__wrapper">
                 <div className="kt-login__container">
                   <div className="kt-login__logo m-0">
-                    <img src="/media/logos/Kodeon-Logo-V1.1.svg" width="300"/>
+                    <img src="/media/logos/suits-logo.png" width="200"/>
                   </div>
                   <div className="kt-login__signin">
                     <div className="kt-login__head">

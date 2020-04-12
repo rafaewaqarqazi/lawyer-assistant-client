@@ -8,7 +8,6 @@ import RegistrationWizardHeader from "../../Components/registration/wizard/Regis
 import RegistrationWizardActions from "../../Components/registration/wizard/RegistrationWizardActions";
 import RegistrationWizardFormPInfo from "../../Components/registration/wizard/RegistrationWizardFormPInfo";
 import RegistrationWizardLayout from "../../Components/layout/registration/RegistrationWizardLayout";
-import RegistrationWirzardFormAddress from "../../Components/registration/wizard/RegistrationWirzardFormAddress";
 import RegistrationWizardFormCredentials from "../../Components/registration/wizard/RegistrationWizardFormCredentials";
 import RegistrationWizardFormConfirm from "../../Components/registration/wizard/RegistrationWizardFormConfirm";
 import MainLayout from "../../Components/layout/main/MainLayout";
@@ -40,34 +39,29 @@ function Registration({ intl }) {
         <RegistrationWizardLayout current={current}>
           <Formik
             initialValues={{
-              title: "",
               firstName: "",
-              surName: "",
-              dob: "",
-              country: "",
-              address: "",
+              lastName: "",
+              role: "",
               email: "",
               password: "",
               confirmPassword: "",
-              multiFactorAuth: ""
+              agree: ""
             }}
             validate={values => validateRegistration(values, current)}
             validateOnChange={false}
             validateOnBlur={false}
             onSubmit={(values, { setStatus, setSubmitting }) => {
               enableLoading();
-              setTimeout(() => {
-                register({ ...values, confirmPassword: undefined })
-                  .then(res => {
-                    if (res.data.message) {
-                      setStatus(
-                        intl.formatMessage({
-                          id: "AUTH.VALIDATION.INVALID_REGISTRATION",
-                          defaultMessage: res.data.message
-                        })
-                      );
-                    }
-                    disableLoading();
+              register({ ...values, confirmPassword: undefined, agree: undefined })
+                .then(res => {
+                  if (!res.data.success) {
+                    setStatus(
+                      intl.formatMessage({
+                        id: "AUTH.VALIDATION.INVALID_REGISTRATION",
+                        defaultMessage: res.data.message
+                      })
+                    );
+                  } else {
                     setStatus(
                       intl.formatMessage({
                         id: "AUTH.VALIDATION.REGISTRATION_SUCCESS",
@@ -77,18 +71,19 @@ function Registration({ intl }) {
                     setTimeout(() => {
                       history.push("/");
                     }, 2000);
-                  })
-                  .catch(error => {
-                    disableLoading();
-                    setSubmitting(false);
-                    setStatus(
-                      intl.formatMessage({
-                        id: "AUTH.VALIDATION.INVALID_REGISTRATION",
-                        defaultMessage: "Something Went Wrong!"
-                      })
-                    );
-                  });
-              }, 1000);
+                  }
+                  disableLoading();
+                })
+                .catch(error => {
+                  disableLoading();
+                  setSubmitting(false);
+                  setStatus(
+                    intl.formatMessage({
+                      id: "AUTH.VALIDATION.INVALID_REGISTRATION",
+                      defaultMessage: "Something Went Wrong!"
+                    })
+                  );
+                });
             }}
           >
             {({
@@ -110,12 +105,6 @@ function Registration({ intl }) {
                 />
                 <div className="kt-grid__item kt-grid__item--fluid kt-wizard-v3__wrapper">
                   <div className="kt-form">
-                    <div className="form-group text-center">
-                      You have now provided all the information we require to
-                      create your profile. Please read our terms and conditions,
-                      and legal notices and click the register button to start
-                      your journey with Kodeon
-                    </div>
                     <Form onSubmit={handleSubmit}>
                       {Object.keys(errors).length > 0 && current === 3 && (
                         <div role="alert" className="alert alert-danger">
@@ -139,12 +128,9 @@ function Registration({ intl }) {
                         <RegistrationWizardFormPInfo errors={errors} />
                       )}
                       {current === 1 && (
-                        <RegistrationWirzardFormAddress errors={errors} />
-                      )}
-                      {current === 2 && (
                         <RegistrationWizardFormCredentials errors={errors} />
                       )}
-                      {current === 3 && (
+                      {current === 2 && (
                         <RegistrationWizardFormConfirm errors={errors} />
                       )}
                       <RegistrationWizardActions

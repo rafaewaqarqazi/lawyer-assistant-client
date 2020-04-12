@@ -7,11 +7,10 @@ import "react-app-polyfill/stable";
 import React from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
-import { mockAxios, setupAxios } from "./_metronic";
+import { setupAxios } from "./_metronic";
 import store, { persistor } from "./app/store/store";
 import App from "./App";
 import "./index.scss"; // Standard version
-// import "./sass/style.react.rtl.css"; // RTL version
 import "socicon/css/socicon.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./_metronic/_assets/plugins/line-awesome/css/line-awesome.css";
@@ -30,7 +29,7 @@ const { PUBLIC_URL } = process.env;
  *
  * @see https://github.com/ctimmerm/axios-mock-adapter
  */
-/* const mock = */ mockAxios(axios);
+// /* const mock = */ mockAxios(axios);
 
 /**
  * Inject metronic interceptors for axios.
