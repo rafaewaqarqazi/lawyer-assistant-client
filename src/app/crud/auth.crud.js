@@ -1,52 +1,48 @@
 import axios from "axios";
 
 export const LOGIN_URL = "/api/auth/login";
-export const LOGIN_WITH_CODE_URL = "api/auth/loginWithCode";
 export const REGISTER_URL = "/api/auth/register";
-export const REQUEST_PASSWORD_URL = "api/auth/forgot-password";
-export const CHANGE_PASSWORD_URL = "api/auth/change-password";
-export const CLOSE_ACCOUNT_URL = "api/auth/close-account";
-export const SETUP_TFA_URL = "api/auth/tfa/setup";
-export const VERIFY_TFA_URL = "api/auth/tfa/verify";
-export const ENABLE_TFA_URL = "api/auth/tfa/enable";
-export const DISABLE_TFA_URL = "api/auth/tfa/disable";
+export const EDIT_PROFILE_URL = "/api/auth/profile/edit";
+export const EDIT_PROFILE_IMAGE_URL = "/api/auth/profile/image";
+export const REQUEST_PASSWORD_URL = "/api/auth/forgot-password";
+export const RESET_PASSWORD_URL = "/api/auth/reset-password";
+export const CHANGE_PASSWORD_URL = "/api/auth/change-password";
+export const GET_ADMINS_URL = "/api/auth/admins/all";
+export const REMOVE_ADMIN_URL = "/api/auth/admins/remove";
+export const ADMIN_CREATE_URL = "/api/auth/admins/create";
 
-export const ME_URL = "api/me";
 
 export function login(email, password) {
   return axios.post(LOGIN_URL, { email, password });
 }
-export function loginWithCode(code) {
-  return axios.post(LOGIN_WITH_CODE_URL, { code });
+
+export function getAdmins() {
+  return axios.get(GET_ADMINS_URL);
+}
+export function removeAdmin(adminId) {
+  return axios.put(REMOVE_ADMIN_URL, {adminId});
 }
 
 export function register(data) {
-  return axios.post(REGISTER_URL, data);
+  return axios.post(`${REGISTER_URL}/pdf`, data);
+}
+export function createAdmin(data) {
+  return axios.post(ADMIN_CREATE_URL, data);
+}
+export function editProfile(data) {
+  return axios.put(`${EDIT_PROFILE_URL}/pdf`, data);
+
+}export function editProfileImage(data) {
+  return axios.put(`${EDIT_PROFILE_IMAGE_URL}/images`, data);
 }
 
 export function requestPassword(email) {
-  return axios.post(REQUEST_PASSWORD_URL, { email });
+  return axios.put(REQUEST_PASSWORD_URL, { email });
+}
+export function resetPassword(data) {
+  return axios.put(RESET_PASSWORD_URL, data);
 }
 export function changePassword(data) {
   return axios.put(CHANGE_PASSWORD_URL, data);
 }
-export function closeAccount(data) {
-  return axios.put(CLOSE_ACCOUNT_URL, data);
-}
-export function setupTFA() {
-  return axios.put(SETUP_TFA_URL);
-}
-export function verifyCode(code) {
-  return axios.put(VERIFY_TFA_URL, {code});
-}
-export function enableTFA() {
-  return axios.put(ENABLE_TFA_URL);
-}
-export function disableTFA(code) {
-  return axios.put(DISABLE_TFA_URL, {code});
-}
 
-export function getUserByToken() {
-  // Authorization head should be fulfilled in interceptor.
-  return axios.get(ME_URL);
-}

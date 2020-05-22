@@ -4,7 +4,7 @@ import MainFooter from "./MainFooter";
 const MainLayout = ({children}) => {
   return (
     <div
-      style={{backgroundImage: 'url(/media/demos/demo4/header.jpg)', backgroundPosition: 'center top', backgroundSize: '100% 350px', height: '350px'}}
+      style={{backgroundImage: 'url(/media/bg/350.jpg)', backgroundPosition: 'center top', backgroundSize: '100% 350px', height: '350px'}}
     >
       <div className="kt-page--loading-enabled kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header--minimize-menu kt-header-mobile--fixed kt-subheader--enabled kt-subheader--transparent">
 

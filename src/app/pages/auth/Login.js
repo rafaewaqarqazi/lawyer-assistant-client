@@ -7,6 +7,7 @@ import clsx from "clsx";
 import * as auth from "../../store/ducks/auth.duck";
 import { login } from "../../crud/auth.crud";
 import LoginLayout from "../../Components/layout/login/LoginLayout";
+import "../../../_metronic/_assets/sass/pages/login/login-3.scss";
 
 function Login(props) {
   const history = useHistory()
@@ -27,7 +28,7 @@ function Login(props) {
   };
 
   return (
-    <>
+    <div className="kt-grid__item kt-grid__item--fluid  kt-grid__item--order-tablet-and-mobile-1  kt-login__wrapper">
       <LoginLayout heading="Sign to Suits">
         <Formik
           initialValues={{
@@ -63,10 +64,10 @@ function Login(props) {
             setTimeout(() => {
               login(values.email, values.password)
                 .then((res) => {
-                  console.log('res', res)
                   disableLoading();
                   props.login(res.data.authToken);
                   props.fulfillUser(res.data.user)
+                  history.push('/')
                 })
                 .catch(() => {
                   disableLoading();
@@ -154,7 +155,7 @@ function Login(props) {
           )}
         </Formik>
       </LoginLayout>
-    </>
+    </div>
   );
 }
 
