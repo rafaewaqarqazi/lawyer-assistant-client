@@ -11,6 +11,9 @@ export const validateRegistration = (values, current) => {
   } else if (current === 0 && !values.mobileNo.match(/^[0-9]{11}$/)) {
     errors.mobileNo = 'Invalid Mobile No!'
   }
+  if (current === 0 && values.role === '') {
+    errors.role = 'Account Type is Required!'
+  }
   if (current === 1 && values.email.trim() === '') {
     errors.email = 'Email is required!';
   } else if (current === 1 &&
@@ -35,10 +38,7 @@ export const validateRegistration = (values, current) => {
   if (current === 2 && !values.country) {
     errors.address = 'Country is Required!';
   }
-  if (current === 3 && !values.cv) {
-    errors.cv = 'Please Upload Your CV'
-  }
-  if (current === 4 && !values.agree) {
+  if (current === 3 && !values.agree) {
     errors.agree = 'Please Agree to our privacy and service policy'
   }
   return errors;

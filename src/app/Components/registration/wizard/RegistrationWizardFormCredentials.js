@@ -15,7 +15,7 @@ const RegistrationWizardFormCredentials = ({errors}) => {
         {formErrorMessage(errors.password)}
         <Field className="form-control" type='password' name="password" placeholder="********"/>
         <span className="form-text text-muted">
-          Password must be a minimum 8 characters with at least one capital letter, one special letter and one number
+          Password must be a minimum 8 characters with at least one capital letter and one number
         </span>
       </div>
       <div className="form-group">

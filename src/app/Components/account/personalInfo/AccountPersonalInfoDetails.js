@@ -128,20 +128,6 @@ const AccountPersonalInfoDetails = ({user, fulfillUser}) => {
                     </div>
                     <h5>{user.country || 'Not Provided'}</h5>
                   </div>
-                  {
-                    user.role === '1' &&
-                    <div className="form-group col-6">
-                      <div className='form-label'>
-                        CV
-                      </div>
-                      <div className='pdf-uploaded'>
-                        <a href={`/pdf/${user.user_details.cv.filename}`} target='_blank'>
-                          <div className='fa fa-file-pdf'/>
-                        </a>
-                      </div>
-                    </div>
-                  }
-
 
                 </div>
                 : <div className="row">
@@ -151,16 +137,12 @@ const AccountPersonalInfoDetails = ({user, fulfillUser}) => {
                       lastName: user.lastName,
                       address: user.address,
                       country: user.country,
-                      cv: user.user_details.cv.filename,
                       mobileNo: user.mobileNo
                     }}
                     validate={editProfileValidations}
                     onSubmit={(values, { setStatus, setSubmitting, resetForm }) => {
                       enableLoading();
-                      const formData = new FormData();
-                      formData.set('cv', values.cv)
-                      formData.set('data', JSON.stringify({...values, userId: user._id}))
-                      editProfile(formData)
+                      editProfile({...values, userId: user._id})
                         .then(res => {
                           if (!res.data.success) {
                             disableLoading();
@@ -238,46 +220,6 @@ const AccountPersonalInfoDetails = ({user, fulfillUser}) => {
                             <ErrorMessage name='country' render={formErrorMessage}/>
                           </div>
                         </div>
-                        {
-                          user.role === '1' &&
-                          <div className="form-group form-group-last row pb-3">
-                            <label className="col-xl-3 col-lg-3 col-form-label">
-                              CV
-                            </label>
-                            <div className="col-lg-9 col-xl-6">
-                              <Dropzone
-                                onDrop={(acceptedFiles) => setFieldValue('cv', acceptedFiles[0])}
-                                accept="application/pdf"
-                                onDropRejected={onDropReject}
-                                multiple={false}
-                              >
-                                {({getRootProps, getInputProps, isDragActive}) => (
-                                  getRootProps && getInputProps && <section>
-                                    <div {...getRootProps({
-                                      className: `base-style ${isDragActive ? 'active-style' : ''}`
-                                    })}>
-                                      <input {...getInputProps()} />
-                                      {
-                                        isDragActive
-                                          ? <span>Drop the file here ...</span>
-                                          : <span>Drag 'n' drop file in pdf here, or click to select file</span>
-                                      }
-                                    </div>
-                                  </section>
-                                )}
-                              </Dropzone>
-                              <ErrorMessage name='cv' render={formErrorMessage}/>
-                              {
-                                values.cv &&
-                                <div className='pdf-uploaded'>
-                                  <div className='fa fa-file-pdf'/>
-                                  <div className='fa fa-minus-circle' onClick={() => setFieldValue('cv', null)}/>
-                                </div>
-                              }
-                            </div>
-                          </div>
-                        }
-
                         <div className="kt-portlet__foot">
                           <div className="kt-form__actions">
                             <div className="row">

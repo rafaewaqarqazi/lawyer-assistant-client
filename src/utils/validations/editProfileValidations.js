@@ -19,9 +19,6 @@ export const editProfileValidations = values => {
   if (!values.country) {
     errors.country = 'Required!'
   }
-  if (!values.cv) {
-    errors.cv = 'Required!'
-  }
 
   return errors;
 }

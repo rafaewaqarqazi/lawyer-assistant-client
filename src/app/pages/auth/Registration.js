@@ -51,7 +51,7 @@ function Registration({ intl }) {
                 country: "",
                 confirmPassword: "",
                 mobileNo: "",
-                cv: null,
+                role: "",
                 agree: ""
               }}
               validate={values => validateRegistration(values, current)}
@@ -59,10 +59,7 @@ function Registration({ intl }) {
               validateOnBlur={false}
               onSubmit={(values, { setStatus, setSubmitting }) => {
                 enableLoading();
-                const formData = new FormData();
-                formData.set('cv', values.cv)
-                formData.set('data', JSON.stringify({...values, cv: undefined, confirmPassword: undefined, agree: undefined}))
-                register(formData)
+                register({...values, confirmPassword: undefined, agree: undefined})
                   .then(res => {
                     if (!res.data.success) {
                       setStatus(
@@ -141,9 +138,6 @@ function Registration({ intl }) {
                           <RegistrationWirzardFormAddress errors={errors} />
                         )}
                         {current === 3 && (
-                          <RegistrationWizardCv errors={errors} setFieldValue={setFieldValue} values={values}/>
-                        )}
-                        {current === 4 && (
                           <RegistrationWizardFormConfirm errors={errors} />
                         )}
                         <RegistrationWizardActions

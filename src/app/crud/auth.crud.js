@@ -24,13 +24,13 @@ export function removeAdmin(adminId) {
 }
 
 export function register(data) {
-  return axios.post(`${REGISTER_URL}/pdf`, data);
+  return axios.post(`${REGISTER_URL}`, data);
 }
 export function createAdmin(data) {
   return axios.post(ADMIN_CREATE_URL, data);
 }
 export function editProfile(data) {
-  return axios.put(`${EDIT_PROFILE_URL}/pdf`, data);
+  return axios.put(`${EDIT_PROFILE_URL}`, data);
 
 }export function editProfileImage(data) {
   return axios.put(`${EDIT_PROFILE_IMAGE_URL}/images`, data);
