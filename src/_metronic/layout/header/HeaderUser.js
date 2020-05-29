@@ -17,12 +17,8 @@ const HeaderUser = () => {
       <div className="kt-header-menu-wrapper flex-grow-1" >
         <div className="container d-flex align-items-center">
           <Brand/>
-          <NavLink to="/jobs/list" activeClassName='active' className="btn btn-link nav-link ml-3">Jobs List</NavLink>
-          {
-            isAuthorized && <NavLink to="/jobs/applied" activeClassName='active' className="btn btn-link nav-link ml-3">Jobs Applied</NavLink>
-          }
-          <NavLink to="/interviews" activeClassName='active' className="btn btn-link nav-link ml-3">Interviews</NavLink>
-          <NavLink to="/tests" activeClassName='active' className="btn btn-link nav-link ml-3">Tests</NavLink>
+          <NavLink to="/jobs/list" activeClassName='active' className="btn btn-link nav-link ml-3">Lawyers List</NavLink>
+          <NavLink to="/interviews" activeClassName='active' className="btn btn-link nav-link ml-3">Blogs</NavLink>
         </div>
       </div>
       <Topbar />

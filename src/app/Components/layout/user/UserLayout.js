@@ -16,13 +16,13 @@ import clsx from "clsx";
 import {useLayoutStyles} from "../../../../utils/material-styles/layoutStyles";
 import HeaderUser from "../../../../_metronic/layout/header/HeaderUser";
 const htmlClassService = new HTMLClassService();
-const UserLayout = ({children, layoutConfig}) => {
+const UserLayout = ({children, layoutConfig, nobg}) => {
   const classes = useLayoutStyles();
   const [open, setOpen] = useState(true)
   htmlClassService.setConfig(layoutConfig);
   // scroll to top after location changes
   window.scrollTo(0, 0);
-
+  const bg = !nobg ? {backgroundImage: 'url(/media/bg/bg-9.jpg)', backgroundSize: '100% 470px', backgroundRepeat: 'no-repeat', backgroundAttachment: 'fixed'} : {}
   return (
     <LayoutInitializer
       styles={[]}
@@ -36,7 +36,7 @@ const UserLayout = ({children, layoutConfig}) => {
       <HeaderUser/>
       <div
         className="kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header-mobile--fixed "
-        style={{background: '#f2f3f8', backgroundImage: 'url(/media/bg/bg-9.jpg)', backgroundSize: '100% 470px', backgroundRepeat: 'no-repeat', backgroundAttachment: 'fixed'}}
+        style={{background: '#f2f3f8', ...bg}}
       >
         {/* <!-- begin::Body --> */}
         <div className="d-flex kt-wrapper">
