@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import { connect } from "react-redux";
 import objectPath from "object-path";
 import Header from "./header/Header";
-import { withRouter } from "react-router-dom";
+import {Link, withRouter} from "react-router-dom";
 import HeaderMobile from "./header/HeaderMobile";
 import AsideLeft from "./aside/AsideLeftAdmin";
 import ScrollTop from "../../app/partials/layout/ScrollTop";
@@ -19,15 +19,18 @@ import '../../_metronic/_assets/sass/global/layout/aside/skins/dark.scss'
 import clsx from "clsx";
 import Hidden from "@material-ui/core/Hidden";
 import {useLayoutStyles} from "../../utils/material-styles/layoutStyles";
+import {Alert} from "react-bootstrap";
 const htmlClassService = new HTMLClassService();
 
-function Layout({children, layoutConfig}) {
+function Layout({children, layoutConfig, user, history}) {
   const classes = useLayoutStyles();
   const [open, setOpen] = useState(true)
+  const [show, setShow] = useState(true);
   htmlClassService.setConfig(layoutConfig);
   // scroll to top after location changes
   window.scrollTo(0, 0);
 
+  const handleClose = () => setShow(false)
   return (
     <LayoutInitializer
       styles={[]}
@@ -59,7 +62,23 @@ function Layout({children, layoutConfig}) {
 
 
           <main className={clsx(classes.content, classes.contentShift)}>
-            <KtContent>{children}</KtContent>
+            <KtContent>
+              {
+                user.role === '2' && history.location.pathname !== '/account' ?
+                  user.lawyer_details ?
+                    (user.lawyer_details.lawSchool === '' || user.lawyer_details.bio === '' || user.lawyer_details.practiceAreas.length === 0) &&
+                <Alert show={show} variant="warning" onClose={handleClose} dismissible>
+                  Please Complete your profile for better results
+                  <Link to='/account' className='ml-2'> complete now!</Link>
+                </Alert>
+                    : <Alert show={show} variant="warning" onClose={handleClose} dismissible>
+                      Please Complete your profile for better results
+                      <Link to='/account' className='ml-2'> complete now!</Link>
+                    </Alert>
+                  : null
+              }
+              {children}
+            </KtContent>
           </main>
         </div>
 
@@ -70,7 +89,8 @@ function Layout({children, layoutConfig}) {
   )
 }
 
-const mapStateToProps = ({ builder: { layoutConfig } }) => ({
+const mapStateToProps = ({ builder: { layoutConfig }, auth: { user } }) => ({
+  user,
   layoutConfig,
   selfLayout: objectPath.get(layoutConfig, "self.layout"),
   asideDisplay: objectPath.get(layoutConfig, "aside.self.display")

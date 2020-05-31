@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React, {Fragment, useState} from 'react';
 import {connect} from "react-redux";
-import {Tooltip} from "@material-ui/core";
+import {Chip, Tooltip} from "@material-ui/core";
 import {editProfile, editProfileImage} from "../../../crud/auth.crud";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import {Alert} from "react-bootstrap";
@@ -10,6 +10,8 @@ import InputCountry from "../../input/InputCountry";
 import {editProfileValidations} from "../../../../utils/validations/editProfileValidations";
 import Dropzone from "react-dropzone";
 import * as auth from "../../../store/ducks/auth.duck";
+import {qualifications} from "../../../../utils/job-post-data";
+import {practiceAreas} from "../../../../utils/practiceAreas";
 
 const AccountPersonalInfoDetails = ({user, fulfillUser}) => {
   const [img, setImg] = useState(null)
@@ -128,7 +130,33 @@ const AccountPersonalInfoDetails = ({user, fulfillUser}) => {
                     </div>
                     <h5>{user.country || 'Not Provided'}</h5>
                   </div>
-
+                  {
+                    user.role === '2' &&
+                      <Fragment>
+                        <div className="form-group col-6">
+                          <div className='form-label'>
+                            Law School
+                          </div>
+                          <h5>{ (user.lawyer_details && user.lawyer_details.lawSchool) || 'Not Provided'}</h5>
+                        </div>
+                        <div className="form-group col-6">
+                          <div className='form-label'>
+                            Area of Practice
+                          </div>
+                          {user.lawyer_details && user.lawyer_details.practiceAreas ? user.lawyer_details.practiceAreas.map((area, i) => (
+                            <Chip style={{margin: '0 10px 10px 0'}} variant='outlined' size='small' label={area} key={i}/>
+                          ))
+                            : <h5>Not Provided</h5>
+                          }
+                        </div>
+                        <div className="form-group col-12">
+                          <div className='form-label'>
+                            Bio
+                          </div>
+                          <h5>{(user.lawyer_details && user.lawyer_details.bio) || 'Not Provided'}</h5>
+                        </div>
+                      </Fragment>
+                  }
                 </div>
                 : <div className="row">
                   <Formik
@@ -137,12 +165,15 @@ const AccountPersonalInfoDetails = ({user, fulfillUser}) => {
                       lastName: user.lastName,
                       address: user.address,
                       country: user.country,
-                      mobileNo: user.mobileNo
+                      mobileNo: user.mobileNo,
+                      lawSchool: (user.lawyer_details && user.lawyer_details.lawSchool) || '',
+                      practiceAreas: (user.lawyer_details && user.lawyer_details.practiceAreas) || [],
+                      bio: (user.lawyer_details && user.lawyer_details.bio) || ''
                     }}
                     validate={editProfileValidations}
                     onSubmit={(values, { setStatus, setSubmitting, resetForm }) => {
                       enableLoading();
-                      editProfile({...values, userId: user._id})
+                      editProfile({...values, userId: user._id, role: user.role})
                         .then(res => {
                           if (!res.data.success) {
                             disableLoading();
@@ -220,6 +251,54 @@ const AccountPersonalInfoDetails = ({user, fulfillUser}) => {
                             <ErrorMessage name='country' render={formErrorMessage}/>
                           </div>
                         </div>
+                        {
+                          user.role === '2' &&
+                            <Fragment>
+                              <div className="form-group row">
+                                <label className="col-xl-3 col-lg-3 col-form-label">
+                                  Law School
+                                </label>
+                                <div className="col-lg-9 col-xl-6">
+                                  <Field className="form-control" name="lawSchool" placeholder="Law School"/>
+                                </div>
+                              </div>
+                              <div className="form-group row">
+                                <label className="col-xl-3 col-lg-3 col-form-label">
+                                  Area of Practice
+                                </label>
+                                <div className="col-lg-9 col-xl-6">
+                                  <Field className="form-control" as='select' onChange={event => {
+                                    const value = [].slice
+                                      .call(event.target.selectedOptions)
+                                      .map(option => option.value)
+                                    if(!values.practiceAreas.includes(...value))
+                                      setFieldValue('practiceAreas', [...values.practiceAreas, ...value])
+                                  }}>
+                                    <option value="">--Select Practice Areas--</option>
+                                    {
+                                      practiceAreas.map((area, index) => (
+                                        <option value={area} key={index}>{area}</option>
+                                      ))
+                                    }
+                                  </Field>
+                                </div>
+                                <div className="col-xl-3 col-lg-3 col-form-label"/>
+                                <div className="col-lg-9 col-xl-6 mt-2">
+                                  {values.practiceAreas.map((area, i) => (
+                                    <Chip style={{margin: '0 10px 10px 0'}} variant='outlined' size='small' label={area} onDelete={() => setFieldValue('practiceAreas', values.practiceAreas.filter((v, index) => index !== i))} key={i}/>
+                                  ))}
+                                </div>
+                              </div>
+                              <div className="form-group row">
+                                <label className="col-xl-3 col-lg-3 col-form-label">
+                                  Bio
+                                </label>
+                                <div className="col-lg-9 col-xl-6">
+                                  <Field as='textarea' className="form-control" name="bio" placeholder="Provide you detailed info..."/>
+                                </div>
+                              </div>
+                            </Fragment>
+                        }
                         <div className="kt-portlet__foot">
                           <div className="kt-form__actions">
                             <div className="row">
@@ -248,8 +327,6 @@ const AccountPersonalInfoDetails = ({user, fulfillUser}) => {
                   </Formik>
                 </div>
             }
-
-
           </div>
         </div>
       </div>
