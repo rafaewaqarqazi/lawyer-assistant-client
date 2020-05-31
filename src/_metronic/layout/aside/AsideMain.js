@@ -28,7 +28,7 @@ const AsideMain = ({open, setOpen,children}) => {
           <div className="kt-aside__brand kt-grid__item " id="kt_aside_brand">
             <div className="kt-aside__brand-logo">
               <Link to="/">
-                <img alt="Logo" src="/media/logos/recruitment-agency-logo.png" style={{width: '50px'}}/>
+                <img alt="Logo" src="/media/logos/suits-logo.png" style={{width: '100px'}}/>
               </Link>
             </div>
             <div className="kt-aside__brand-tools">
