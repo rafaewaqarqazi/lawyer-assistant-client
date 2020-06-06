@@ -72,7 +72,7 @@ const CreateAdmin = () => {
                   })
                   .catch((error) => {
                     disableLoading();
-                    setError({show: true, message: 'Could not create admin!'})
+                    setError({show: true, message: 'Could not create lawyer!'})
                     setSubmitting(false)
                     closeAlert()
                   });

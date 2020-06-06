@@ -10,7 +10,7 @@ class HeaderMobile extends React.Component {
       <div id="kt_header_mobile" className="kt-header-mobile  kt-header-mobile--fixed ">
         <div className="kt-header-mobile__logo">
           <Link to="/">
-            <img alt="Logo" src="/media/logos/recruitment-agency-logo.png" width={40}/>
+            <img alt="Logo" src="/media/logos/suits-logo.png" width={50}/>
           </Link>
         </div>
         <div className="kt-header-mobile__toolbar">

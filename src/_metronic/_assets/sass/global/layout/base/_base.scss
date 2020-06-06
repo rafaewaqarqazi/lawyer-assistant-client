@@ -29,7 +29,7 @@ body {
 
 		// Fixed Content Head
 		.kt-header--fixed.kt-subheader--fixed.kt-subheader--enabled & {
-			padding-top: kt-get($kt-header-config, base, desktop, default, height) + kt-get($kt-subheader-config, fixed, height);
+			padding-top: kt-get($kt-header-config, base, desktop, default, height);
 		}
 
 		// Fixed Aside

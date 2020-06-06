@@ -150,10 +150,10 @@ const AccountPersonalInfoDetails = ({user, fulfillUser}) => {
                           }
                         </div>
                         <div className="form-group col-12">
-                          <div className='form-label'>
+                          <div className='form-label mb-3'>
                             Bio
                           </div>
-                          <h5>{(user.lawyer_details && user.lawyer_details.bio) || 'Not Provided'}</h5>
+                          <h6 className='text-justify' style={{wordBreak: 'break-word'}}>{(user.lawyer_details && user.lawyer_details.bio) || 'Not Provided'}</h6>
                         </div>
                       </Fragment>
                   }

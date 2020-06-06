@@ -11,6 +11,7 @@ import { setupAxios } from "./_metronic";
 import store, { persistor } from "./app/store/store";
 import App from "./App";
 import "./index.scss"; // Standard version
+import 'react-big-calendar/lib/sass/styles.scss';
 import "socicon/css/socicon.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./_metronic/_assets/plugins/line-awesome/css/line-awesome.css";

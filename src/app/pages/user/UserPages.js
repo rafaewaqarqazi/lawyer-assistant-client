@@ -1,20 +1,21 @@
 import React, {Suspense} from 'react';
 import {LayoutSplashScreen} from "../../../_metronic";
 import {Redirect, Route, Switch} from "react-router-dom";
-import Dashboard from "../admin/Dashboard";
+import Dashboard from "../lawyer/Dashboard";
 import JobDetails from "../../Components/jobs/JobDetails";
 import Account from "../Account";
 import UserRoute from "../../router/UserRoute";
 import JobsApplied from "./JobsApplied";
-import Interviews from "../admin/Interviews";
-import Tests from "../admin/Tests";
-import Applications from "../admin/Jobs/Applications";
+import Interviews from "../lawyer/Interviews";
+import Tests from "../lawyer/Tests";
+import Applications from "../lawyer/Jobs/Applications";
 import Home from "../Home";
 import Login from "../auth/Login";
 import Registration from "../auth/Registration";
 import UserLayout from "../../Components/layout/user/UserLayout";
 import {shallowEqual, useSelector} from "react-redux";
 import KtContent from "../../../_metronic/layout/KtContent";
+import LawyerDetails from "../../Components/users/LawyerDetails";
 
 const UserPages = () => {
   const { isAuthorized } = useSelector(
@@ -41,9 +42,9 @@ const UserPages = () => {
             <KtContent><JobsApplied/></KtContent>
           </UserLayout>
         )} exact/>
-        <Route path="/jobs/details/:jobId" component={() => (
+        <Route path="/lawyer/details/:lawyerId" component={() => (
           <UserLayout>
-            <KtContent><JobDetails/></KtContent>
+            <KtContent><LawyerDetails/></KtContent>
           </UserLayout>
         )} exact/>
         <Route path="/interviews" component={() => (
