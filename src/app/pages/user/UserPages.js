@@ -16,6 +16,7 @@ import UserLayout from "../../Components/layout/user/UserLayout";
 import {shallowEqual, useSelector} from "react-redux";
 import KtContent from "../../../_metronic/layout/KtContent";
 import LawyerDetails from "../../Components/users/LawyerDetails";
+import LawyerList from "../lawyer/LawyersList";
 
 const UserPages = () => {
   const { isAuthorized } = useSelector(
@@ -31,15 +32,9 @@ const UserPages = () => {
         <Route path="/" component={Home} exact/>
         { !isAuthorized && <Route path="/auth/login" component={Login} exact/>}
         { !isAuthorized && <Route path="/auth/registration" component={Registration} exact/>}
-        <Route path="/jobs/list" component={() => (
+        <Route path="/lawyers/list" component={() => (
           <UserLayout>
-            <KtContent><Dashboard/></KtContent>
-          </UserLayout>
-        )} exact/>
-
-        <UserRoute path="/jobs/applied" component={() => (
-          <UserLayout>
-            <KtContent><JobsApplied/></KtContent>
+            <KtContent><LawyerList/></KtContent>
           </UserLayout>
         )} exact/>
         <Route path="/lawyer/details/:lawyerId" component={() => (
@@ -47,24 +42,14 @@ const UserPages = () => {
             <KtContent><LawyerDetails/></KtContent>
           </UserLayout>
         )} exact/>
-        <Route path="/interviews" component={() => (
+        <Route path="/blogs" component={() => (
           <UserLayout>
             <KtContent><Applications/></KtContent>
           </UserLayout>
         )} exact/>
-        <Route path="/interviews/:jobId" component={() => (
+        <Route path="/blogs/:blogId" component={() => (
           <UserLayout>
             <KtContent><Interviews/></KtContent>
-          </UserLayout>
-        )} exact/>
-        <Route path="/tests" component={() => (
-          <UserLayout>
-            <KtContent><Applications/></KtContent>
-          </UserLayout>
-        )} exact/>
-        <Route path="/tests/:jobId" component={() => (
-          <UserLayout>
-            <KtContent><Tests/></KtContent>
           </UserLayout>
         )} exact/>
         <UserRoute path="/account" component={() => (

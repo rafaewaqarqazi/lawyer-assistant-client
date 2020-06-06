@@ -7,7 +7,7 @@ import * as lawyer from "../store/ducks/lawyers.duck";
 import {connect, useSelector} from "react-redux";
 
 const Home = ({addLawyers}) => {
-  const { lawyersList, isUser, userId } = useSelector(
+  const { lawyersList } = useSelector(
     ({ lawyers: {lawyersList} }) => ({
       lawyersList
     })

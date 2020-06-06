@@ -17,8 +17,8 @@ const HeaderUser = () => {
       <div className="kt-header-menu-wrapper flex-grow-1" >
         <div className="container d-flex align-items-center">
           <Brand/>
-          <NavLink to="/jobs/list" activeClassName='active' className="btn btn-link nav-link ml-3">Lawyers List</NavLink>
-          <NavLink to="/interviews" activeClassName='active' className="btn btn-link nav-link ml-3">Blogs</NavLink>
+          <NavLink to="/lawyers/list" activeClassName='active' className="btn btn-link nav-link ml-3">Lawyers List</NavLink>
+          <NavLink to="/blogs" activeClassName='active' className="btn btn-link nav-link ml-3">Blogs</NavLink>
         </div>
       </div>
       <Topbar />
