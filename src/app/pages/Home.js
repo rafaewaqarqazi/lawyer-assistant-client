@@ -5,7 +5,7 @@ import {getAllLawyers} from "../crud/user.crud";
 import LawyerCard from "../Components/users/LawyerCard";
 import * as lawyer from "../store/ducks/lawyers.duck";
 import {connect, useSelector} from "react-redux";
-
+import io from 'socket.io-client';
 const Home = ({addLawyers}) => {
   const { lawyersList } = useSelector(
     ({ lawyers: {lawyersList} }) => ({
@@ -13,6 +13,8 @@ const Home = ({addLawyers}) => {
     })
   );
   useEffect(() => {
+   const socket = io('localhost:3001')
+    socket.emit('message', {message: 'My First Message'})
     getAllLawyers()
       .then(res => {
         if (res.data.success) {
@@ -28,13 +30,13 @@ const Home = ({addLawyers}) => {
             <div className="col-12 col-sm-7 text-center pb-3 pb-sm-0">
               <h2>Get help With All of Your Legal Needs</h2>
               <h6>Suits makes it easy to find a lawyer</h6>
-              <Link to='/jobs/list' className="btn btn-success mt-4">Find Now</Link>
+              <Link to='/lawyers/list' className="btn btn-success mt-4">Find Now</Link>
             </div>
             <div className="col-12 col-sm-5"><img src='/media/bg/img1.png' width={400}/></div>
           </div>
           <div className='d-flex justify-content-between align-items-center' style={{background: 'rgb(242, 243, 248)', padding: '10px 5px 30px 10px', borderRadius: '4px'}}>
             <h4 className='mb-0'>Highest Ranked</h4>
-            <Link to='/jobs/list' className='nav-link'>See All</Link>
+            <Link to='/lawyers/list' className='nav-link'>See All</Link>
           </div>
           <div className="row mt-5">
             {
