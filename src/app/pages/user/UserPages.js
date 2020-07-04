@@ -17,6 +17,7 @@ import {shallowEqual, useSelector} from "react-redux";
 import KtContent from "../../../_metronic/layout/KtContent";
 import LawyerDetails from "../../Components/users/LawyerDetails";
 import LawyerList from "../lawyer/LawyersList";
+import ChatPage from "../ChatPage";
 
 const UserPages = () => {
   const { isAuthorized } = useSelector(
@@ -42,14 +43,9 @@ const UserPages = () => {
             <KtContent><LawyerDetails/></KtContent>
           </UserLayout>
         )} exact/>
-        <Route path="/blogs" component={() => (
+        <UserRoute path="/chat" component={() => (
           <UserLayout>
-            <KtContent><Applications/></KtContent>
-          </UserLayout>
-        )} exact/>
-        <Route path="/blogs/:blogId" component={() => (
-          <UserLayout>
-            <KtContent><Interviews/></KtContent>
+            <KtContent><ChatPage/></KtContent>
           </UserLayout>
         )} exact/>
         <UserRoute path="/account" component={() => (

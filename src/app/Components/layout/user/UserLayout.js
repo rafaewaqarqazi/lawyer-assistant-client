@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import LayoutInitializer from "../../../../_metronic/layout/LayoutInitializer";
 import MenuConfig from "../../../../_metronic/layout/MenuConfig";
 import LayoutConfig from "../../../../_metronic/layout/LayoutConfig";
@@ -9,8 +9,34 @@ import {withRouter} from "react-router-dom";
 import HTMLClassService from "../../../../_metronic/layout/HTMLClassService";
 import {useLayoutStyles} from "../../../../utils/material-styles/layoutStyles";
 import HeaderUser from "../../../../_metronic/layout/header/HeaderUser";
+import io from "socket.io-client";
+import {connect, useSelector} from "react-redux";
+import * as chat from "../../../store/ducks/chat.duck";
 const htmlClassService = new HTMLClassService();
-const UserLayout = ({children, layoutConfig, nobg}) => {
+const UserLayout = ({children, layoutConfig, nobg, setSocket, addChats}) => {
+  const { chat, user, socket } = useSelector(
+    ({ chat, auth: { user } }) => ({
+      chat,
+      user,
+      socket: chat.socket
+    })
+  );
+  useEffect(() => {
+    if (user) {
+      setSocket(io('localhost:3001'))
+    }
+  }, [user])
+  useEffect(() => {
+    if (socket) {
+      socket.emit('get-chats', {userId: user._id}, (result) => {
+        console.log('chats', result)
+        if (result.length > 0) {
+          socket.emit('join-room', {roomId: result.map(r => r._id)})
+          addChats(result)
+        }
+      })
+    }
+  }, [socket])
   const classes = useLayoutStyles();
   htmlClassService.setConfig(layoutConfig);
   // scroll to top after location changes
@@ -61,4 +87,4 @@ const UserLayout = ({children, layoutConfig, nobg}) => {
   )
 };
 
-export default withRouter(UserLayout);
+export default withRouter(connect(null, chat.actions)(UserLayout));

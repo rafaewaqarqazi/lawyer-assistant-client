@@ -1,5 +1,5 @@
-import React, {useState} from "react";
-import { connect } from "react-redux";
+import React, {useEffect, useState} from "react";
+import {connect, useSelector} from "react-redux";
 import objectPath from "object-path";
 import Header from "./header/Header";
 import {Link, withRouter} from "react-router-dom";
@@ -20,9 +20,39 @@ import clsx from "clsx";
 import Hidden from "@material-ui/core/Hidden";
 import {useLayoutStyles} from "../../utils/material-styles/layoutStyles";
 import {Alert} from "react-bootstrap";
+import io from "socket.io-client";
+import * as chat from "../../app/store/ducks/chat.duck";
 const htmlClassService = new HTMLClassService();
 
-function Layout({children, layoutConfig, user, history}) {
+function Layout({children, layoutConfig, history, addChats, chat, user, socket, setSocket}) {
+  useEffect(() => {
+    if (user) {
+      setSocket(io('localhost:3001'))
+    }
+  }, [user])
+  useEffect(() => {
+    if (socket) {
+      socket.emit('get-chats', {userId: user._id}, (result) => {
+        console.log('chats', result)
+        if (result.length > 0) {
+          socket.emit('join-room', {roomId: result.map(r => r._id)})
+          addChats(result)
+        }
+      })
+      socket.on('room-created', (data) => {
+        if (data.users.filter(u => u._id === user._id).length > 0){
+          console.log('room-created', data)
+          socket.emit('get-chats', {userId: user._id}, (result) => {
+            console.log('chats', result)
+            if (result.length > 0) {
+              socket.emit('join-room', {roomId: result.map(r => r._id)})
+              addChats(result)
+            }
+          })
+        }
+      })
+    }
+  }, [socket])
   const classes = useLayoutStyles();
   const [open, setOpen] = useState(true)
   const [show, setShow] = useState(true);
@@ -89,11 +119,13 @@ function Layout({children, layoutConfig, user, history}) {
   )
 }
 
-const mapStateToProps = ({ builder: { layoutConfig }, auth: { user } }) => ({
+const mapStateToProps = ({ builder: { layoutConfig }, auth: { user }, chat }) => ({
   user,
+  chat,
+  socket: chat.socket,
   layoutConfig,
   selfLayout: objectPath.get(layoutConfig, "self.layout"),
   asideDisplay: objectPath.get(layoutConfig, "aside.self.display")
 });
 
-export default withRouter(connect(mapStateToProps)(Layout));
+export default withRouter(connect(mapStateToProps, chat.actions)(Layout));

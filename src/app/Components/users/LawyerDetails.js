@@ -1,31 +1,31 @@
 import React from "react";
-import { Redirect, useParams } from "react-router-dom";
+import { Redirect, useParams, useHistory } from "react-router-dom";
 import { connect, useSelector } from "react-redux";
 import {
   Portlet,
   PortletBody,
-  PortletHeader,
-  PortletHeaderToolbar
 } from "../../partials/content/Portlet";
-import {
-  getCategory,
-  getDepartment,
-  getExperience,
-  getQualification,
-  getType
-} from "../../../utils/job-post-data";
-import moment from "moment";
-import Tooltip from "@material-ui/core/Tooltip";
-import { canApply } from "../../../utils";
 import Rating from "@material-ui/lab/Rating";
-
-const LawyerDetails = () => {
+import * as chat from "../../store/ducks/chat.duck";
+const LawyerDetails = ({addNewReceiver, addRoom, addReceiver}) => {
   const params = useParams();
-  const { lawyersList, isUser, userId } = useSelector(
-    ({ lawyers: { lawyersList } }) => ({
-      lawyersList
+  const history = useHistory()
+  const { lawyersList, user } = useSelector(
+    ({ lawyers: { lawyersList }, auth: { user } }) => ({
+      lawyersList,
+      user
     })
   );
+  const handleClickMessage = () => {
+    addRoom(null)
+    addReceiver(null)
+    addNewReceiver(params.lawyerId
+      ? lawyersList.filter(j => j._id === params.lawyerId).length > 0
+        ? lawyersList.filter(j => j._id === params.lawyerId)[0]._id
+        : null
+      : null)
+    history.push('/chat')
+  }
   const lawyer = params.lawyerId
     ? lawyersList.filter(j => j._id === params.lawyerId).length > 0
       ? lawyersList.filter(j => j._id === params.lawyerId)[0]
@@ -55,10 +55,16 @@ const LawyerDetails = () => {
                 </div>
                 <h5
                   style={{ textOverflow: "ellipsis" }}
-                  className="mt-4 mb-5 text-nowrap overflow-hidden text-center letter-space-1"
+                  className="mt-4 mb-2 text-nowrap overflow-hidden text-center letter-space-1"
                 >
                   {`${lawyer.firstName} ${lawyer.lastName}`}
                 </h5>
+                {
+                  user?.role === '1' && <div className='d-flex justify-content-center mb-5'>
+                    <button onClick={handleClickMessage} className='btn btn-sm btn-label-success'>Message</button>
+                  </div>
+                }
+
                 <div className="d-flex justify-content-between mb-3">
                   <span className="font-weight-bold letter-space-1">
                     Law School:
@@ -134,4 +140,4 @@ const LawyerDetails = () => {
   }
 };
 
-export default LawyerDetails;
+export default connect(null, chat.actions)(LawyerDetails);

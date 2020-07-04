@@ -9,6 +9,10 @@ import AdminRoute from "../../router/AdminRoute";
 import Admins from "./Admins";
 import CreateAdmin from "./CreateAdmin";
 import Clients from "./clients/clients";
+import UserLayout from "../../Components/layout/user/UserLayout";
+import KtContent from "../../../_metronic/layout/KtContent";
+import ChatPage from "../ChatPage";
+import UserRoute from "../../router/UserRoute";
 export default function AdminPages() {
   return (
     <Suspense fallback={<LayoutSplashScreen />}>
@@ -25,6 +29,7 @@ export default function AdminPages() {
         <AdminRoute path="/account" component={Account} exact/>
         <AdminRoute path="/admins" component={Admins} exact/>
         <AdminRoute path="/admins/new" component={CreateAdmin} exact/>
+        <AdminRoute path="/chat" component={ChatPage} exact/>
         <Redirect to="/" />
       </Switch>
     </Suspense>

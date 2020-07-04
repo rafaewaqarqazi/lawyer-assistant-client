@@ -5,7 +5,6 @@ import {getAllLawyers} from "../crud/user.crud";
 import LawyerCard from "../Components/users/LawyerCard";
 import * as lawyer from "../store/ducks/lawyers.duck";
 import {connect, useSelector} from "react-redux";
-import io from 'socket.io-client';
 const Home = ({addLawyers}) => {
   const { lawyersList } = useSelector(
     ({ lawyers: {lawyersList} }) => ({
@@ -13,8 +12,6 @@ const Home = ({addLawyers}) => {
     })
   );
   useEffect(() => {
-   const socket = io('localhost:3001')
-    socket.emit('message', {message: 'My First Message'})
     getAllLawyers()
       .then(res => {
         if (res.data.success) {

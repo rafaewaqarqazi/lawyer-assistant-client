@@ -11,6 +11,11 @@ class UserProfile extends React.Component {
     const { user } = this.props;
 
     return (
+      <>
+        <div className='d-flex align-items-center mr-3'>
+          <i className="fa fa-comment"/>
+        </div>
+
       <Dropdown
         className="kt-header__topbar-item kt-header__topbar-item--user"
         drop="down"
@@ -86,6 +91,7 @@ class UserProfile extends React.Component {
           </div>
         </Dropdown.Menu>
       </Dropdown>
+        </>
     );
   }
 }

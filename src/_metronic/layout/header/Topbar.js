@@ -12,6 +12,7 @@ const Topbar = () => {
   );
   return (
     <div className="kt-header__topbar kt-grid__item">
+
       {
         isAuthorized ? <UserProfile/> :
           <div className='d-flex align-items-center'>
