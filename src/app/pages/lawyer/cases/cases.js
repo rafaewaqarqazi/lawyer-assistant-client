@@ -11,18 +11,17 @@ import * as job from "../../../store/ducks/jobs.duck";
 import PaginationComponent from "../../../Components/PaginationComponent";
 import Filters from "../../../Components/Filters";
 
-const Cases = ({jobsList, removeJob}) => {
+const Cases = ({user, removeJob}) => {
   const [show, setShow] = useState(false);
   const [jobId, setJobId] = useState('');
   const [error, setError] = useState({show: false, message: ''});
   const [success, setSuccess] = useState({show: false, message: ''});
   const [perPage, setPerPage] = useState(10);
   const [pageNo, setPageNo] = useState(1);
-  const [filteredData, setFilteredData] = useState(jobsList)
+  const [filteredData, setFilteredData] = useState(user.lawyer_details?.cases || [])
+  const [cases, setCases] = useState(user.lawyer_details?.cases || [])
   const [filters, setFilters] = useState({
-    department: '',
-    category: '',
-    type: '',
+    practiceArea: '',
     search: ''
   })
 
@@ -69,41 +68,34 @@ const Cases = ({jobsList, removeJob}) => {
     setFilters({...filters, [name]: value})
   }
   useEffect(() => {
-    setFilteredData(jobsList.filter(job =>
-      filters.department !== ''
-        ? job.department === filters.department && job.category.includes(filters.category) && job.type.includes(filters.type) && job.title.toLowerCase().includes(filters.search.toLowerCase())
-        : job.department.includes(filters.department) && job.category.includes(filters.category) && job.type.includes(filters.type) && job.title.toLowerCase().includes(filters.search.toLowerCase())
+    setFilteredData(cases.filter(sCase =>
+      sCase.title.toLowerCase().includes(filters.search.toLowerCase())
     ))
-  }, [filters])
+  }, [filters, cases])
   return (
     <div>
       <Alert show={success.show} variant="success">{success.message}</Alert>
       <Alert show={error.show} variant="danger">{error.message}</Alert>
       <Portlet className="kt-portlet--height-fluid-half kt-portlet--border-bottom-brand">
         <PortletHeader
-          title='Jobs'
-          toolbar={
-            <PortletHeaderToolbar>
-              <Link to='/jobs/new'>
-                <button className='btn btn-label btn-bold btn-sm'>
-                  <i className='fa fa-plus'/> New Job Post
-                </button>
-              </Link>
-            </PortletHeaderToolbar>
-          }
+          title='Cases'
         />
         <PortletBody>
-          <Filters filters={filters} handleChangeFilters={handleChangeFilters}/>
+          <div className="d-flex align-items-center justify-content-end">
+            <div className="position-relative">
+              <input type="text" className='form-control form-control-sm ml-2 ' placeholder='Search for Case' value={filters.search} onChange={(event) => handleChangeFilters('search', event.target.value)}/>
+              <span className='fa fa-search position-absolute ' style={{top: '30%', right: 0}}/>
+            </div>
+          </div>
           <Table responsive className='mt-2'>
             <thead>
             <tr>
               <th>#</th>
               <th>Title</th>
-              <th>Department</th>
-              <th>Category</th>
-              <th>Type</th>
-              <th>Posted On</th>
-              <th>Due Date</th>
+              <th>Client</th>
+              <th>Next Hearing</th>
+              <th>Total Hearings</th>
+              <th>Status</th>
               <th>Actions</th>
             </tr>
             </thead>
@@ -111,29 +103,29 @@ const Cases = ({jobsList, removeJob}) => {
             {
               filteredData.length === 0
                 ? <tr >
-                  <td colSpan={8} style={{textAlign: 'center'}}>No Jobs Found</td>
+                  <td colSpan={8} style={{textAlign: 'center'}}>No Cases Found</td>
                 </tr>
                 : filteredData
-                  .slice((pageNo - 1) * perPage, ((pageNo - 1) * perPage) + perPage <= jobsList.length ? ((pageNo - 1) * perPage) + perPage : jobsList.length)
-                  .map((job, i) => (
+                  .slice((pageNo - 1) * perPage, ((pageNo - 1) * perPage) + perPage <= cases.length ? ((pageNo - 1) * perPage) + perPage : cases.length)
+                  .map((caseDetails, i) => (
                     <tr key={i}>
                       <td>{i+1}</td>
-                      <td>{job.title}</td>
-                      <td>{departments.filter(d => d.code === job.department)[0].title}</td>
-                      <td>{categories.filter(c => c.code === job.category)[0].title}</td>
-                      <td>{types.filter(t => t.code === job.type)[0].title}</td>
-                      <td>{moment(job.postedOn).format('DD/MM/YYYY')}</td>
-                      <td>{moment(job.dueDate).format('DD/MM/YYYY')}</td>
-                      <td>
-                        <Tooltip title='Edit Post' placement='top'>
-                          <Link to={`/jobs/edit/${job._id}`}>
-                            <i className='fa fa-pencil-alt mr-4'/>
-                          </Link>
-                        </Tooltip>
-                        <Tooltip title='Delete Post' placement='top'>
-                          <i className='fa fa-minus-circle' style={{color: 'red'}} onClick={() => handleShow(job._id)}/>
-                        </Tooltip>
-                      </td>
+                      <td>{caseDetails.title}</td>
+                      <td>{caseDetails.client}</td>
+                      <td>{caseDetails.hearings.sort((a, b) => new Date(a.date) - new Date(b.date))[0]?.date ? moment(caseDetails.hearings.sort((a, b) => new Date(a.date) - new Date(b.date))[0]?.date).format('DD/MM/YYYY') : 'N/A'}</td>
+                      <td>{caseDetails.hearings.length}</td>
+                      <td>{caseDetails.status || 'In Progress'}</td>
+                      {/*<td>{moment(caseDetails.dueDate).format('DD/MM/YYYY')}</td>*/}
+                      {/*<td>*/}
+                      {/*  <Tooltip title='Edit Post' placement='top'>*/}
+                      {/*    <Link to={`/caseDetailss/edit/${caseDetails._id}`}>*/}
+                      {/*      <i className='fa fa-pencil-alt mr-4'/>*/}
+                      {/*    </Link>*/}
+                      {/*  </Tooltip>*/}
+                      {/*  <Tooltip title='Delete Post' placement='top'>*/}
+                      {/*    <i className='fa fa-minus-circle' style={{color: 'red'}} onClick={() => handleShow(caseDetails._id)}/>*/}
+                      {/*  </Tooltip>*/}
+                      {/*</td>*/}
                     </tr>
                   ))
             }
@@ -165,8 +157,8 @@ const Cases = ({jobsList, removeJob}) => {
     </div>
   );
 };
-const mapStateToProps = ({ jobs: {jobsList} }) => ({
-  jobsList
+const mapStateToProps = ({ auth: {user} }) => ({
+  user
 });
 
 export default connect(mapStateToProps, job.actions)(Cases);

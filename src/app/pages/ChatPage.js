@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {connect, useSelector} from "react-redux";
-import {Portlet, PortletBody, PortletHeader} from "../partials/content/Portlet";
+import {Portlet, PortletBody, PortletHeader, PortletHeaderToolbar} from "../partials/content/Portlet";
 import ChatUsers from "../Components/chat/ChatUsers";
 import Conversation from "../Components/chat/Conversation";
 import * as chat from '../store/ducks/chat.duck'
+import {allowHiring} from "../crud/user.crud";
 const ChatPage = ({addChats, addRoom, addReceiver, addNewReceiver}) => {
   const { chat, user, socket } = useSelector(
     ({ chat, auth: { user } }) => ({
@@ -80,11 +81,27 @@ const ChatPage = ({addChats, addRoom, addReceiver, addNewReceiver}) => {
       addChats(result)
     })
   }
+  const handleAllowHiring = () => {
+    console.log('chat', chat)
+    allowHiring({clientId: chat.receiver, lawyerId: user._id})
+    .then(result => {
+      console.log('result', result)
+    })
+      .catch(error => console.log(error.message))
+  }
   return (
     <div className='d-flex justify-content-center'>
       <Portlet className='chat-container'>
         <PortletHeader
           title='Chat'
+          toolbar={
+            <PortletHeaderToolbar>
+              {
+                user.role === '2' &&
+                  <button className="btn btn-label btn-sm btn-bold" onClick={handleAllowHiring}>Allow Hiring</button>
+              }
+            </PortletHeaderToolbar>
+          }
         />
         <PortletBody className='h-100'>
           <div className="row h-100">

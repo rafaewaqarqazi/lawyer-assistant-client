@@ -1,15 +1,30 @@
-import React from "react";
-import { Redirect, useParams, useHistory } from "react-router-dom";
+import React, {useState} from "react";
+import {Redirect, useParams, useHistory, Link} from "react-router-dom";
 import { connect, useSelector } from "react-redux";
 import {
   Portlet,
-  PortletBody,
+  PortletBody, PortletHeader, PortletHeaderToolbar,
 } from "../../partials/content/Portlet";
 import Rating from "@material-ui/lab/Rating";
 import * as chat from "../../store/ducks/chat.duck";
-const LawyerDetails = ({addNewReceiver, addRoom, addReceiver}) => {
+import * as lawyerReducer from "../../store/ducks/lawyers.duck";
+import {Alert, Button, Modal} from "react-bootstrap";
+import {hireLawyer} from "../../crud/user.crud";
+const LawyerDetails = ({addNewReceiver, addRoom, addReceiver, updateLawyer}) => {
   const params = useParams();
   const history = useHistory()
+  const [show, setShow] = useState(true);
+  const [showModal, setShowModal] = useState(false)
+  const [res, setRes] = useState({
+    success: false,
+    error: false,
+    message: ''
+  })
+  const [input, setInput] = useState({
+    title: '',
+    description: ''
+  })
+  const handleClose = () => setShow(false)
   const { lawyersList, user } = useSelector(
     ({ lawyers: { lawyersList }, auth: { user } }) => ({
       lawyersList,
@@ -26,6 +41,37 @@ const LawyerDetails = ({addNewReceiver, addRoom, addReceiver}) => {
       : null)
     history.push('/chat')
   }
+  const handleHire = () => {
+    const hLawyer = lawyersList.filter(j => j._id === params.lawyerId)[0];
+    console.log('input', input)
+    hireLawyer({clientId: user._id, lawyerId: hLawyer._id, ...input})
+      .then(result => {
+        console.log('result', result)
+        if (result.data.success){
+          setRes({error: false, success: true, message: result.data.message})
+          setShowModal(false)
+          setInput({title: '', description: ''})
+          updateLawyer(result.data.lawyer)
+          closeRes()
+        } else {
+          setRes({success: false, error: true, message: result.data.message})
+          closeRes()
+        }
+      })
+      .catch(error => {
+        setRes({success: false, error: true, message: error.message})
+        closeRes()
+      })
+  }
+  const closeRes = () =>{
+    setTimeout(() => {
+      setRes({success: false, error: false, message: ''})
+
+    }, 3000)
+  }
+  const handleOnChange = event => {
+    setInput({...input, [event.target.name]: event.target.value})
+  }
   const lawyer = params.lawyerId
     ? lawyersList.filter(j => j._id === params.lawyerId).length > 0
       ? lawyersList.filter(j => j._id === params.lawyerId)[0]
@@ -36,7 +82,30 @@ const LawyerDetails = ({addNewReceiver, addRoom, addReceiver}) => {
   } else {
     return (
       <div>
+        <Alert show={res.success} variant="success">{res.message}</Alert>
+        <Alert show={res.error} variant="danger">{res.message}</Alert>
+        {
+          !lawyer.lawyer_details?.canHire?.includes(user._id) &&
+          <Alert show={show} variant="info" onClose={handleClose} dismissible>
+            To hire the lawyer, chat with him and provide info about your case, if requirements match, lawyer will enable hiring for you!
+          </Alert>
+        }
+        {console.log(lawyer)}
         <Portlet className="kt-portlet--height-fluid-half kt-portlet--border-bottom-brand">
+          <PortletHeader
+            title='Details'
+            toolbar={
+              <PortletHeaderToolbar>
+                {
+                  user.role === '1' &&
+                  <button className="btn btn-label btn-sm btn-bold" disabled={
+                    !lawyer.lawyer_details?.canHire?.includes(user._id) ||
+                      lawyer.lawyer_details?.cases?.filter(c => c.client === user._id)?.length > 0
+                  } onClick={() => setShowModal(true)}>Hire Now</button>
+                }
+              </PortletHeaderToolbar>
+            }
+          />
           <PortletBody>
             <div className="row">
               <div className="col-12 col-sm-6">
@@ -135,9 +204,26 @@ const LawyerDetails = ({addNewReceiver, addRoom, addReceiver}) => {
             </div>
           </PortletBody>
         </Portlet>
+        <Modal show={showModal} onHide={() => setShowModal(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Case Information</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <input type="text" value={input.title} name='title' onChange={handleOnChange} placeholder='Case Title' className="form-control form-group"/>
+            <textarea rows="5" value={input.description} name='description' onChange={handleOnChange} placeholder='Case Details...' className="form-control"/>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowModal(false)}>
+              Close
+            </Button>
+            <Button variant="primary" disabled={input.title.trim() === '' || input.description.trim() === ''} onClick={handleHire}>
+              Hire Now
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     );
   }
 };
 
-export default connect(null, chat.actions)(LawyerDetails);
+export default connect(null, {...chat.actions, ...lawyerReducer.actions})(LawyerDetails);

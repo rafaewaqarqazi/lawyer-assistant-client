@@ -27,7 +27,7 @@ const UserLayout = ({children, layoutConfig, nobg, setSocket, addChats}) => {
     }
   }, [user])
   useEffect(() => {
-    if (socket) {
+    if (socket && user) {
       socket.emit('get-chats', {userId: user._id}, (result) => {
         console.log('chats', result)
         if (result.length > 0) {

@@ -2,7 +2,8 @@ import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
 export const actionTypes = {
-  AddLawyers: "[AddLawyers] Action"
+  AddLawyers: "[AddLawyers] Action",
+  UpdateLawyer: "[UpdateLawyer] Action"
 };
 
 const initialAuthState = {
@@ -19,6 +20,20 @@ export const reducer = persistReducer(
           lawyersList: lawyers
         };
       }
+      case actionTypes.UpdateLawyer: {
+        const { lawyer } = action.payload;
+        return {
+          lawyersList: state.lawyersList.map(l => {
+            if (l._id === lawyer._id) {
+              return {
+                ...lawyer
+              }
+            } else {
+              return l
+            }
+          })
+        };
+      }
       default:
         return state;
     }
@@ -26,7 +41,8 @@ export const reducer = persistReducer(
 );
 
 export const actions = {
-  addLawyers: lawyers => ({ type: actionTypes.AddLawyers, payload: { lawyers } })
+  addLawyers: lawyers => ({ type: actionTypes.AddLawyers, payload: { lawyers } }),
+  updateLawyer: lawyer => ({ type: actionTypes.UpdateLawyer, payload: { lawyer } })
 };
 
 export function* saga() {
