@@ -1,14 +1,8 @@
 import React, {Suspense} from 'react';
 import {LayoutSplashScreen} from "../../../_metronic";
 import {Redirect, Route, Switch} from "react-router-dom";
-import Dashboard from "../lawyer/Dashboard";
-import JobDetails from "../../Components/jobs/JobDetails";
 import Account from "../Account";
 import UserRoute from "../../router/UserRoute";
-import JobsApplied from "./JobsApplied";
-import Interviews from "../lawyer/Interviews";
-import Tests from "../lawyer/Tests";
-import Applications from "../lawyer/Jobs/Applications";
 import Home from "../Home";
 import Login from "../auth/Login";
 import Registration from "../auth/Registration";
@@ -18,6 +12,7 @@ import KtContent from "../../../_metronic/layout/KtContent";
 import LawyerDetails from "../../Components/users/LawyerDetails";
 import LawyerList from "../lawyer/LawyersList";
 import ChatPage from "../ChatPage";
+import MyLawyers from "../../Components/users/MyLawyers";
 
 const UserPages = () => {
   const { isAuthorized } = useSelector(
@@ -36,6 +31,11 @@ const UserPages = () => {
         <Route path="/lawyers/list" component={() => (
           <UserLayout>
             <KtContent><LawyerList/></KtContent>
+          </UserLayout>
+        )} exact/>
+        <UserRoute path="/lawyers/my" component={() => (
+          <UserLayout>
+            <KtContent><MyLawyers/></KtContent>
           </UserLayout>
         )} exact/>
         <Route path="/lawyer/details/:lawyerId" component={() => (

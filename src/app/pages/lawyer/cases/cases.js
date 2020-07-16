@@ -1,30 +1,41 @@
 import React, {useEffect, useState} from 'react';
 import {Portlet, PortletBody, PortletHeader, PortletHeaderToolbar} from "../../../partials/content/Portlet";
 import {Modal, Table, Alert} from 'react-bootstrap'
-import {Link} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import {connect} from "react-redux";
 import {categories, departments, types} from "../../../../utils/job-post-data";
 import moment from 'moment'
 import {Tooltip} from "@material-ui/core";
 import {deleteJob} from "../../../crud/job.crud";
-import * as job from "../../../store/ducks/jobs.duck";
+import * as caseReducer from "../../../store/ducks/cases.duck";
 import PaginationComponent from "../../../Components/PaginationComponent";
 import Filters from "../../../Components/Filters";
-
-const Cases = ({user, removeJob}) => {
+import {getAllCases} from "../../../crud/user.crud";
+const Cases = ({casesList, user, addCases, casesLoading, updateCase}) => {
+  const history = useHistory()
   const [show, setShow] = useState(false);
-  const [jobId, setJobId] = useState('');
+  const [caseId, setCaseId] = useState('');
   const [error, setError] = useState({show: false, message: ''});
   const [success, setSuccess] = useState({show: false, message: ''});
   const [perPage, setPerPage] = useState(10);
   const [pageNo, setPageNo] = useState(1);
-  const [filteredData, setFilteredData] = useState(user.lawyer_details?.cases || [])
-  const [cases, setCases] = useState(user.lawyer_details?.cases || [])
+  const [filteredData, setFilteredData] = useState(casesList || [])
   const [filters, setFilters] = useState({
-    practiceArea: '',
     search: ''
   })
 
+  useEffect(() => {
+    getAllCases({userId: user._id, userType: 'lawyer'})
+      .then(result => {
+        console.log('result', result)
+        if (result.data.success) {
+          addCases(result.data.cases)
+        } else {
+          console.log('Something went wrong')
+        }
+      })
+      .catch(error => console.log('error', error.message))
+  }, [])
   const handlePageChange = (pageNumber) => {
     setPageNo(pageNumber);
   };
@@ -34,11 +45,11 @@ const Cases = ({user, removeJob}) => {
   };
   const handleClose = () => setShow(false);
   const handleShow = (id) => {
-    setJobId(id)
+    setCaseId(id)
     setShow(true);
   }
   const confirmDelete = () => {
-    deleteJob(jobId)
+    deleteJob(caseId)
       .then(res => {
         if (!res.data.success) {
           setError({show: true, message: res.data.message})
@@ -47,7 +58,7 @@ const Cases = ({user, removeJob}) => {
         } else {
           setSuccess({show: true, message: res.data.message})
           handleClose()
-          removeJob(jobId)
+          // removeJob(caseId)
           closeAlert()
         }
       })
@@ -68,10 +79,10 @@ const Cases = ({user, removeJob}) => {
     setFilters({...filters, [name]: value})
   }
   useEffect(() => {
-    setFilteredData(cases.filter(sCase =>
-      sCase.title.toLowerCase().includes(filters.search.toLowerCase())
+    setFilteredData(casesList.filter(sCase =>
+      sCase.details.title.toLowerCase().includes(filters.search.toLowerCase())
     ))
-  }, [filters, cases])
+  }, [filters, casesList])
   return (
     <div>
       <Alert show={success.show} variant="success">{success.message}</Alert>
@@ -87,7 +98,7 @@ const Cases = ({user, removeJob}) => {
               <span className='fa fa-search position-absolute ' style={{top: '30%', right: 0}}/>
             </div>
           </div>
-          <Table responsive className='mt-2'>
+          <Table responsive className='mt-2' hover>
             <thead>
             <tr>
               <th>#</th>
@@ -96,7 +107,6 @@ const Cases = ({user, removeJob}) => {
               <th>Next Hearing</th>
               <th>Total Hearings</th>
               <th>Status</th>
-              <th>Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -106,15 +116,15 @@ const Cases = ({user, removeJob}) => {
                   <td colSpan={8} style={{textAlign: 'center'}}>No Cases Found</td>
                 </tr>
                 : filteredData
-                  .slice((pageNo - 1) * perPage, ((pageNo - 1) * perPage) + perPage <= cases.length ? ((pageNo - 1) * perPage) + perPage : cases.length)
+                  .slice((pageNo - 1) * perPage, ((pageNo - 1) * perPage) + perPage <= casesList.length ? ((pageNo - 1) * perPage) + perPage : casesList.length)
                   .map((caseDetails, i) => (
-                    <tr key={i}>
+                    <tr key={i} style={{cursor:'pointer'}} onClick={() => history.push(`/cases/details/${caseDetails._id}`)}>
                       <td>{i+1}</td>
-                      <td>{caseDetails.title}</td>
-                      <td>{caseDetails.client}</td>
-                      <td>{caseDetails.hearings.sort((a, b) => new Date(a.date) - new Date(b.date))[0]?.date ? moment(caseDetails.hearings.sort((a, b) => new Date(a.date) - new Date(b.date))[0]?.date).format('DD/MM/YYYY') : 'N/A'}</td>
-                      <td>{caseDetails.hearings.length}</td>
-                      <td>{caseDetails.status || 'In Progress'}</td>
+                      <td>{caseDetails.details.title}</td>
+                      <td>{`${caseDetails.client?.firstName} ${caseDetails.client?.lastName}`}</td>
+                      <td>{caseDetails.details.hearings.sort((a, b) => new Date(a.date) - new Date(b.date))[0]?.date ? moment(caseDetails.details.hearings.sort((a, b) => new Date(a.date) - new Date(b.date))[0]?.date).format('DD/MM/YYYY') : 'N/A'}</td>
+                      <td>{caseDetails.details.hearings.length}</td>
+                      <td>{caseDetails.details.status || 'In Progress'}</td>
                       {/*<td>{moment(caseDetails.dueDate).format('DD/MM/YYYY')}</td>*/}
                       {/*<td>*/}
                       {/*  <Tooltip title='Edit Post' placement='top'>*/}
@@ -157,8 +167,9 @@ const Cases = ({user, removeJob}) => {
     </div>
   );
 };
-const mapStateToProps = ({ auth: {user} }) => ({
+const mapStateToProps = ({ cases, auth: {user} }) => ({
+  casesList: cases.casesList,
   user
 });
 
-export default connect(mapStateToProps, job.actions)(Cases);
+export default connect(mapStateToProps, caseReducer.actions)(Cases);

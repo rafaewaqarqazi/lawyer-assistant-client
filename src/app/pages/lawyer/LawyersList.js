@@ -1,7 +1,5 @@
 import React, {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
-import JobCard from "../../Components/jobs/JobCard";
-import {Alert} from "react-bootstrap";
 import PaginationComponent from "../../Components/PaginationComponent";
 import {Portlet} from "../../partials/content/Portlet";
 import Filters from "../../Components/Filters";

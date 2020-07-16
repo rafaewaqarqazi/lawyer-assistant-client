@@ -1,15 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {Portlet, PortletBody, PortletHeader, PortletHeaderToolbar} from "../../../partials/content/Portlet";
+import {Portlet, PortletBody, PortletHeader, PortletHeaderToolbar} from "../../partials/content/Portlet";
 import {Modal, Table, Alert} from 'react-bootstrap'
 import {Link} from "react-router-dom";
 import {connect} from "react-redux";
 import {Tooltip} from "@material-ui/core";
-import {deleteJob} from "../../../crud/job.crud";
-import * as cases from "../../../store/ducks/cases.duck";
-import PaginationComponent from "../../../Components/PaginationComponent";
-import {getAllCases} from "../../../crud/user.crud";
+import * as cases from "../../store/ducks/cases.duck";
+import PaginationComponent from "../../Components/PaginationComponent";
+import {getAllCases} from "../../crud/user.crud";
 import _ from 'lodash'
-const Clients = ({user, removeJob}) => {
+const MyLawyers = ({user, removeJob}) => {
   const [show, setShow] = useState(false);
   const [jobId, setJobId] = useState('');
   const [error, setError] = useState({show: false, message: ''});
@@ -18,7 +17,7 @@ const Clients = ({user, removeJob}) => {
   const [pageNo, setPageNo] = useState(1);
   const [filteredData, setFilteredData] = useState([])
   const [cases, setCases] = useState([])
-  const [clients, setClients] = useState([])
+  const [lawyers, setLawyers] = useState([])
   const [filters, setFilters] = useState({
     department: '',
     category: '',
@@ -27,13 +26,13 @@ const Clients = ({user, removeJob}) => {
   })
 
   useEffect(() => {
-    getAllCases({userId: user._id, userType: 'lawyer'})
+    getAllCases({userId: user._id, userType: 'client'})
       .then(result => {
         console.log('result', result)
         if (result.data.success) {
           setCases(result.data.cases)
-          const unique = _.uniqWith(result.data.cases.map(c => c.client), _.isEqual)
-          setClients( unique)
+          const unique = _.uniqWith(result.data.cases.map(c => c.lawyer), _.isEqual)
+          setLawyers( unique)
           setFilteredData(unique)
         } else {
           console.log('Something went wrong')
@@ -53,26 +52,7 @@ const Clients = ({user, removeJob}) => {
     setJobId(id)
     setShow(true);
   }
-  const confirmDelete = () => {
-    deleteJob(jobId)
-      .then(res => {
-        if (!res.data.success) {
-          setError({show: true, message: res.data.message})
-          handleClose()
-          closeAlert()
-        } else {
-          setSuccess({show: true, message: res.data.message})
-          handleClose()
-          removeJob(jobId)
-          closeAlert()
-        }
-      })
-      .catch(error => {
-        setError({show: true, message: 'Could not delete Job Post'})
-        handleClose()
-        closeAlert()
-      })
-  }
+
   const closeAlert = () => {
     setTimeout(() => {
       setError({show: false, message: ''})
@@ -84,7 +64,7 @@ const Clients = ({user, removeJob}) => {
     setFilters({...filters, [name]: value})
   }
   useEffect(() => {
-    setFilteredData(clients.filter(client =>
+    setFilteredData(lawyers.filter(client =>
       client.firstName.toLowerCase().includes(filters.search.toLowerCase()) || client.lastName.toLowerCase().includes(filters.search.toLowerCase())
     ))
   }, [filters])
@@ -100,7 +80,7 @@ const Clients = ({user, removeJob}) => {
         <PortletBody>
           <div className="d-flex align-items-center justify-content-end">
             <div className="position-relative">
-              <input type="text" className='form-control form-control-sm ml-2 ' placeholder='Search for Clients' value={filters.search} onChange={(event) => handleChangeFilters('search', event.target.value)}/>
+              <input type="text" className='form-control form-control-sm ml-2 ' placeholder='Search for Lawyers' value={filters.search} onChange={(event) => handleChangeFilters('search', event.target.value)}/>
               <span className='fa fa-search position-absolute ' style={{top: '30%', right: 0}}/>
             </div>
           </div>
@@ -122,15 +102,15 @@ const Clients = ({user, removeJob}) => {
                   <td colSpan={8} style={{textAlign: 'center'}}>No Clients Found</td>
                 </tr>
                 : filteredData
-                  .slice((pageNo - 1) * perPage, ((pageNo - 1) * perPage) + perPage <= clients.length ? ((pageNo - 1) * perPage) + perPage : clients.length)
-                  .map((client, i) => (
+                  .slice((pageNo - 1) * perPage, ((pageNo - 1) * perPage) + perPage <= lawyers.length ? ((pageNo - 1) * perPage) + perPage : lawyers.length)
+                  .map((lawyer, i) => (
                     <tr key={i} className='table-row-center'>
                       <td>{i+1}</td>
-                      <td><img className='kt-badge kt-badge--md kt-img-rounded' src={`/images/${client.profileImage?.filename}`}/></td>
-                      <td>{client.firstName}</td>
-                      <td>{client.lastName}</td>
-                      <td>{client.email}</td>
-                      <td>{cases.filter(c => c.client._id === client._id).length}</td>
+                      <td><img className='kt-badge kt-badge--md kt-img-rounded' src={`/images/${lawyer.profileImage?.filename}`}/></td>
+                      <td>{lawyer.firstName}</td>
+                      <td>{lawyer.lastName}</td>
+                      <td>{lawyer.email}</td>
+                      <td>{cases.filter(c => c.lawyer._id === lawyer._id).length}</td>
                     </tr>
                   ))
             }
@@ -154,7 +134,7 @@ const Clients = ({user, removeJob}) => {
           <button className='btn btn-primary btn-sm' onClick={handleClose}>
             Close
           </button>
-          <button className='btn btn-danger btn-sm' onClick={confirmDelete}>
+          <button className='btn btn-danger btn-sm' >
             Delete
           </button>
         </Modal.Footer>
@@ -167,4 +147,4 @@ const mapStateToProps =({ auth: {user} }) => ({
 });
 
 
-export default connect(mapStateToProps, cases.actions)(Clients);
+export default connect(mapStateToProps, cases.actions)(MyLawyers);

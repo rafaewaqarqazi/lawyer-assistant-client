@@ -18,6 +18,11 @@ const HeaderUser = () => {
         <div className="container d-flex align-items-center">
           <Brand/>
           <NavLink to="/lawyers/list" activeClassName='active' className="btn btn-link nav-link ml-3">Lawyers List</NavLink>
+          {
+            isAuthorized &&
+            <NavLink to="/lawyers/my" activeClassName='active' className="btn btn-link nav-link ml-3">My Lawyers</NavLink>
+          }
+
         </div>
       </div>
       <Topbar />

@@ -51,7 +51,6 @@ const LawyerDetails = ({addNewReceiver, addRoom, addReceiver, updateLawyer}) => 
           setRes({error: false, success: true, message: result.data.message})
           setShowModal(false)
           setInput({title: '', description: ''})
-          updateLawyer(result.data.lawyer)
           closeRes()
         } else {
           setRes({success: false, error: true, message: result.data.message})

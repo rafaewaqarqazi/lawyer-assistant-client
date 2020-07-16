@@ -4,15 +4,12 @@ import Dashboard from "./Dashboard";
 import { LayoutSplashScreen } from "../../../_metronic";
 import Account from "../Account";
 import Cases from "./cases/cases";
-import NewJob from "./Jobs/NewJob";
 import AdminRoute from "../../router/AdminRoute";
 import Admins from "./Admins";
 import CreateAdmin from "./CreateAdmin";
 import Clients from "./clients/clients";
-import UserLayout from "../../Components/layout/user/UserLayout";
-import KtContent from "../../../_metronic/layout/KtContent";
 import ChatPage from "../ChatPage";
-import UserRoute from "../../router/UserRoute";
+import CaseDetails from "./cases/CaseDetails";
 export default function AdminPages() {
   return (
     <Suspense fallback={<LayoutSplashScreen />}>
@@ -23,7 +20,8 @@ export default function AdminPages() {
         }
         <AdminRoute path="/dashboard" component={Dashboard} />
         <AdminRoute path="/cases" component={Cases} exact/>
-        <AdminRoute path="/cases/:caseId" component={Cases} exact/>
+        <AdminRoute path="/cases/details/:caseId" component={CaseDetails} exact/>
+        <AdminRoute path="/cases/hearings/:caseId" component={Cases} exact/>
         <AdminRoute path="/clients/:clientId" component={Clients} exact/>
         <AdminRoute path="/clients" component={Clients} exact/>
         <AdminRoute path="/account" component={Account} exact/>
