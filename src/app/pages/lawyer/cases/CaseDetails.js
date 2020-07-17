@@ -9,15 +9,13 @@ import * as chat from "../../../store/ducks/chat.duck";
 import * as casesReducer from "../../../store/ducks/cases.duck";
 import {Alert, Button, Modal} from "react-bootstrap";
 import moment from "moment";
-import {addHearing} from "../../../crud/user.crud";
+import {addHearing, changeHearingStatus} from "../../../crud/user.crud";
 import { withStyles } from '@material-ui/core/styles';
 import MuiExpansionPanel from '@material-ui/core/ExpansionPanel';
 import MuiExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import MuiExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import {ExpandMore} from "@material-ui/icons";
 import {ExpansionPanelActions} from "@material-ui/core";
-import {Dropdown, DropdownItem, DropdownMenu, DropdownToggle} from "reactstrap";
-import {practiceAreas} from "../../../../utils/practiceAreas";
 const ExpansionPanel = withStyles({
   root: {
     border: '1px solid rgba(0, 0, 0, .125)',
@@ -65,7 +63,8 @@ const CasesDetails = () => {
   const [sCase, setScase] = useState(null)
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
-  const [dropdown, setDropdown] = useState(false)
+  const [confirmModal, setConfirmModal] = useState(false)
+  const [hearingStatus, setHearingStatus] = useState({status: '', id: ''})
   const [res, setRes] = useState({
     success: false,
     error: false,
@@ -77,7 +76,6 @@ const CasesDetails = () => {
     date: ''
   })
   const [expanded, setExpanded] = React.useState('');
-
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
   };
@@ -118,6 +116,31 @@ const CasesDetails = () => {
   const handleOnChange = event => {
     setInput({...input, [event.target.name]: event.target.value})
   }
+  const handleChangeStatus = (status, id) => {
+    console.log(status)
+    setHearingStatus({status, id})
+    setConfirmModal(true)
+  }
+  const handleConfirmStatusChange = () => {
+    changeHearingStatus({...hearingStatus, caseId: casesList.filter(c => c._id === params.caseId)[0]._id})
+      .then(result => {
+        console.log('result', result)
+        if (result.data.success){
+          setConfirmModal(false)
+          setRes({error: false, success: true, message: result.data.message})
+          setScase(result.data.cases)
+          closeRes()
+        } else {
+          setRes({success: false, error: true, message: result.data.message})
+          closeRes()
+        }
+      })
+      .catch(error => {
+        setRes({success: false, error: true, message: error.message})
+        closeRes()
+      })
+
+  }
   useEffect(() => {
     setScase(params.caseId
       ? casesList.filter(c => c._id === params.caseId).length > 0
@@ -126,6 +149,7 @@ const CasesDetails = () => {
       : null)
     setLoading(false)
   }, [])
+
   if (!sCase && !loading) {
     return <Redirect to="/" />;
   } else {
@@ -135,7 +159,6 @@ const CasesDetails = () => {
       <div>
         <Alert show={res.success} variant="success">{res.message}</Alert>
         <Alert show={res.error} variant="danger">{res.message}</Alert>
-        {console.log(sCase)}
         <Portlet className="kt-portlet--height-fluid-half kt-portlet--border-bottom-brand">
           <PortletHeader
             title='Details'
@@ -223,7 +246,8 @@ const CasesDetails = () => {
                     expandIcon={<ExpandMore />}
                   >
                     <div className="font-weight-bold letter-space-1" style={{color: '#646c9a', flexBasis: '33.33%'}}>{hearing.title}</div>
-                    <div >{moment(hearing.date).format('MM-DD-YYYY')}</div>
+                    <div style={{ flexBasis: '33.33%'}} >{moment(hearing.date).format('MM-DD-YYYY')}</div>
+                    <div style={{ flexBasis: '33.33%'}} >{hearing.status || 'Pending'}</div>
                   </ExpansionPanelSummary>
                   <ExpansionPanelDetails>
                     <div className=" letter-space-1 " style={{color: '#646c9a'}}>
@@ -231,22 +255,8 @@ const CasesDetails = () => {
                     </div>
                   </ExpansionPanelDetails>
                   <ExpansionPanelActions>
-                    <Dropdown isOpen={dropdown} toggle={() => setDropdown(!dropdown}>
-                      <DropdownToggle
-                        className="btn-bold btn-sm btn-label-brand border-0 mb-1 mb-sm-0"
-                        caret
-                      >
-                        {status !== '' ? status : 'Select Status to change'}
-                      </DropdownToggle>
-
-                      <DropdownMenu className='dropdown-scroll'>
-                        <DropdownItem onClick={() => handleChangeStatus('')} >All</DropdownItem>
-                        <DropdownItem onClick={() => handleChangeStatus('Completed')}>{practiceArea}</DropdownItem>
-                        <DropdownItem onClick={() => handleChangeStatus('Completed')} >{practiceArea}</DropdownItem>
-                        <DropdownItem onClick={() => handleChangeStatus('Completed')} >{practiceArea}</DropdownItem>
-                      </DropdownMenu>
-
-                    </Dropdown>
+                    <button disabled={hearing.status ? hearing.status !== '' : false} className="btn btn-label btn-sm" onClick={() => handleChangeStatus('No Result', hearing._id)}>No Result</button>
+                    <button disabled={hearing.status ? hearing.status !== '' : false} className="btn btn-label btn-sm" onClick={() => handleChangeStatus('Postponed', hearing._id)}>Postponed</button>
                   </ExpansionPanelActions>
                 </ExpansionPanel>
               ))
@@ -268,6 +278,22 @@ const CasesDetails = () => {
               Close
             </Button>
             <Button variant="primary" disabled={input.title.trim() === '' || input.description.trim() === '' || input.date.trim() === ''} onClick={handleAddHearing}>
+              Add Now
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        <Modal show={confirmModal} onHide={() => setConfirmModal(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirm</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Are you sure?
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setConfirmModal(false)}>
+              Close
+            </Button>
+            <Button variant="primary" onClick={handleConfirmStatusChange}>
               Add Now
             </Button>
           </Modal.Footer>
