@@ -5,6 +5,7 @@ import * as job from "../../store/ducks/jobs.duck";
 import Tooltip from "@material-ui/core/Tooltip";
 import Rating from '@material-ui/lab/Rating'
 import {Link} from "react-router-dom";
+import {getRatings} from "../../../utils";
 const LawyerCard = ({lawyer}) => {
   return (
     <>
@@ -38,7 +39,7 @@ const LawyerCard = ({lawyer}) => {
         <PortletFooter>
           <div className='d-flex justify-content-between'>
             <span className='font-weight-bold'>Ratings:</span>
-            <span className='d-flex align-items-center'><Rating name="lawyer-rating" value={lawyer.lawyer_details.ratings || 0} readOnly/>({lawyer.lawyer_details.ratings || 0})</span>
+            <span className='d-flex align-items-center'><Rating name="lawyer-rating" value={getRatings(lawyer.lawyer_details.reviews)} readOnly/>({getRatings(lawyer.lawyer_details.reviews)})</span>
           </div>
         </PortletFooter>
       </Link>

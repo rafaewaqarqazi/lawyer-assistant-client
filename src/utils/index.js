@@ -46,3 +46,11 @@ export const getShortListedTest = applications => {
 export const getShortListedInterviews = applications => {
   return applications.filter(application => application.interview).length
 }
+
+export const getRatings = reviews => {
+  let rating = 0
+  reviews.map(review => {
+    rating += parseInt(review.rating)
+  })
+  return reviews.length === 0 ? 0 : (rating / reviews.length).toFixed(2)
+}

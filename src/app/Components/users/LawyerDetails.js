@@ -9,12 +9,16 @@ import Rating from "@material-ui/lab/Rating";
 import * as chat from "../../store/ducks/chat.duck";
 import * as lawyerReducer from "../../store/ducks/lawyers.duck";
 import {Alert, Button, Modal} from "react-bootstrap";
-import {hireLawyer} from "../../crud/user.crud";
+import {hireLawyer, submitReview} from "../../crud/user.crud";
+import {getRatings} from "../../../utils";
 const LawyerDetails = ({addNewReceiver, addRoom, addReceiver, updateLawyer}) => {
   const params = useParams();
   const history = useHistory()
   const [show, setShow] = useState(true);
   const [showModal, setShowModal] = useState(false)
+  const [newRating, setNewRating] = useState(null)
+  const [ratingError, setRatingError] = useState(false)
+  const [ratingTxt, setRatingTxt] = useState('')
   const [res, setRes] = useState({
     success: false,
     error: false,
@@ -71,6 +75,35 @@ const LawyerDetails = ({addNewReceiver, addRoom, addReceiver, updateLawyer}) => 
   const handleOnChange = event => {
     setInput({...input, [event.target.name]: event.target.value})
   }
+  const handleSubmitRating = (e) => {
+    e.preventDefault()
+    if (!newRating || ratingTxt.trim() === '') {
+      console.log('please add something')
+      setRatingError(true)
+      setTimeout(() => {
+        setRatingError(false)
+      }, 3000)
+    } else {
+      submitReview({lawyerId: params.lawyerId, ratingTxt, newRating, clientId: user._id})
+        .then(result => {
+          console.log('result', result)
+          if (result.data.success){
+            setRes({error: false, success: true, message: result.data.message})
+            updateLawyer(result.data.result)
+            setNewRating(null)
+            setRatingTxt('')
+            closeRes()
+          } else {
+            setRes({success: false, error: true, message: result.data.message})
+            closeRes()
+          }
+        })
+        .catch(error => {
+          setRes({success: false, error: true, message: error.message})
+          closeRes()
+        })
+    }
+  }
   const lawyer = params.lawyerId
     ? lawyersList.filter(j => j._id === params.lawyerId).length > 0
       ? lawyersList.filter(j => j._id === params.lawyerId)[0]
@@ -84,7 +117,7 @@ const LawyerDetails = ({addNewReceiver, addRoom, addReceiver, updateLawyer}) => 
         <Alert show={res.success} variant="success">{res.message}</Alert>
         <Alert show={res.error} variant="danger">{res.message}</Alert>
         {
-          !lawyer.lawyer_details?.canHire?.includes(user._id) &&
+          user && !lawyer.lawyer_details?.canHire?.includes(user?._id) &&
           <Alert show={show} variant="info" onClose={handleClose} dismissible>
             To hire the lawyer, chat with him and provide info about your case, if requirements match, lawyer will enable hiring for you!
           </Alert>
@@ -96,7 +129,7 @@ const LawyerDetails = ({addNewReceiver, addRoom, addReceiver, updateLawyer}) => 
             toolbar={
               <PortletHeaderToolbar>
                 {
-                  user.role === '1' &&
+                  user?.role === '1' &&
                   <button className="btn btn-label btn-sm btn-bold" disabled={
                     !lawyer.lawyer_details?.canHire?.includes(user._id) ||
                       lawyer.lawyer_details?.cases?.filter(c => c.client === user._id)?.length > 0
@@ -174,10 +207,10 @@ const LawyerDetails = ({addNewReceiver, addRoom, addReceiver, updateLawyer}) => 
                   <span className="d-flex align-items-center">
                     <Rating
                       name="lawyer-rating"
-                      value={lawyer.lawyer_details.ratings || 0}
+                      value={getRatings(lawyer.lawyer_details.reviews)}
                       readOnly
                     />
-                    ({lawyer.lawyer_details.ratings || 0})
+                    ({getRatings(lawyer.lawyer_details.reviews)})
                   </span>
                 </div>
               </div>
@@ -192,10 +225,54 @@ const LawyerDetails = ({addNewReceiver, addRoom, addReceiver, updateLawyer}) => 
             <div className="row mt-5">
               <div className="col-12 col-sm-6">
                 <h5 className="letter-space-1">Client's Reviews</h5>
+
+                {
+                  user?.role === '1' && lawyer.lawyer_details.reviews.filter(review => review.reviewedBy._id === user._id).length === 0 &&
+                    <form onSubmit={handleSubmitRating} className='d-flex flex-column align-items-end'>
+                      <Rating
+                        value={newRating}
+                        onChange={(event, newValue) => setNewRating(newValue)}
+                      />
+                      <textarea rows="5" placeholder='Write your review here' className='form-control form-group' value={ratingTxt} onChange={event => setRatingTxt(event.target.value)}/>
+                      {
+                        ratingError &&
+                        <span className='text-danger'>Rating And Review is Required!</span>
+                      }
+                      <button className="btn btn-label btn-sm" type='submit'>Submit Review</button>
+                    </form>
+
+                }
                 {
                   lawyer.lawyer_details.reviews && lawyer.lawyer_details.reviews.length > 0 ?
                   lawyer.lawyer_details.reviews.map(review => (
-                    <div>{review}</div>
+                    <div className="d-flex mb-3">
+                      <div>
+                        {review.reviewedBy?.profileImage &&
+                        review.reviewedBy.profileImage?.filename ? (
+                          <img
+                            alt="Pic"
+                            className="kt-img-rounded user-image"
+                            src={`/images/${review.reviewedBy.profileImage?.filename}`}
+                          />
+                        ) : (
+                          <span className="kt-badge kt-badge--lg kt-badge--bold text-white bg-info">
+                        {review.reviewedBy && review.reviewedBy.firstName[0]}
+                      </span>
+                        )}
+                      </div>
+                      <div className="d-flex flex-column ml-5 flex-grow-1">
+                        <div className='font-weight-bold mb-2'>{`${review.reviewedBy?.firstName} ${review.reviewedBy?.lastName}`}</div>
+                        <div >{review.text}</div>
+                      </div>
+                      <span className="d-flex align-items-center">
+                    <Rating
+                      name="lawyer-rating"
+                      value={review.rating}
+                      readOnly
+                    />
+                    ({review.rating})
+                  </span>
+                    </div>
                   ))
                     : <h5 className="p-5 text-center letter-space-1">No Reviews Available!</h5>
                 }

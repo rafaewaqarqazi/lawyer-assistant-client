@@ -108,7 +108,7 @@ const MyLawyers = ({user, removeJob}) => {
                       <td>{i+1}</td>
                       <td>
                         {
-                          lawyer.profileImage?.filename ? <img alt="Pic" src={`/images/${lawyer.profileImage.filename}`} />
+                          lawyer.profileImage?.filename ? <img alt="Pic" className="kt-badge  kt-badge--lg kt-img-rounded" src={`/images/${lawyer.profileImage.filename}`} />
                             : <span className="kt-badge kt-badge--username kt-badge--unified-success kt-badge--lg kt-badge--rounded kt-badge--bold">
                     <b>{lawyer && lawyer.firstName[0]}</b>
                   </span>

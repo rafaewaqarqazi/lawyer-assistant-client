@@ -33,9 +33,6 @@ const Filters = ({filters, handleChangeFilters}) => {
           <span className='fa fa-search position-absolute ' style={{top: '30%', right: 0}}/>
         </div>
       </div>
-      <div>
-        <button className="btn btn-label btn-sm">Find By Query</button>
-      </div>
     </div>
   );
 };

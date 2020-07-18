@@ -1,4 +1,5 @@
 export const practiceAreas = [
+  'Accident & Injuries',
   'Administrative law',
   'Admiralty law',
   'Adoption law',

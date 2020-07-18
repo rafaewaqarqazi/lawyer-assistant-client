@@ -5,6 +5,7 @@ import {getAllLawyers} from "../crud/user.crud";
 import LawyerCard from "../Components/users/LawyerCard";
 import * as lawyer from "../store/ducks/lawyers.duck";
 import {connect, useSelector} from "react-redux";
+import {getRatings} from "../../utils";
 const Home = ({addLawyers}) => {
   const { lawyersList } = useSelector(
     ({ lawyers: {lawyersList} }) => ({
@@ -38,7 +39,7 @@ const Home = ({addLawyers}) => {
           <div className="row mt-5">
             {
               lawyersList.length === 0 ? <h5 className='text-center w-100 p-5'>No Record Found!</h5>
-              : lawyersList.sort((a, b) => b.lawyer_details.ratings - a.lawyer_details.ratings)
+              : lawyersList.sort((a, b) => getRatings(b.lawyer_details.reviews) - getRatings(a.lawyer_details.reviews))
                 .map((lawyer, i) => (
                   i < 6 &&
                   <div className="col-12 col-sm-4" key={lawyer._id}>
@@ -49,7 +50,6 @@ const Home = ({addLawyers}) => {
           </div>
           <div className='d-flex justify-content-between align-items-center' style={{background: 'rgb(242, 243, 248)', padding: '10px 5px 10px 10px', borderRadius: '4px'}}>
             <h4 className='mb-0'>Categories</h4>
-            <Link to='/jobs/list' className='nav-link'>See All</Link>
           </div>
           <div className="row mt-3">
             <div className='p-4 align-items-center col-6 col-sm-3 kt-portlet kt-portlet--border-bottom-brand scale-up'>
@@ -71,49 +71,44 @@ const Home = ({addLawyers}) => {
           </div>
 
           <div className='d-flex justify-content-between align-items-center' style={{background: 'rgb(242, 243, 248)', padding: '10px 5px 10px 10px', borderBottom: '1px solid rgb(220, 220, 220)'}}>
-            <h4 className='mb-0'>Here's What Clients say about us</h4>
+            <h4 className='mb-0'>Here's What Clients say about our lawyers</h4>
           </div>
           <div className="row mt-3 pb-5">
-            <div className='p-4 d-flex align-items-start col-12 col-sm-6 '>
-              <img src="/media/users/100_13.jpg" alt="" className="kt-img-rounded mr-4"/>
-              <div className='flex-grow-1 d-flex flex-column'>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla ante libero, porttitor quis tempus ac, porttitor eget dui. Vivamus sit amet tempus dui. Etiam velit libero, tincidunt vel dolor et.
-                </p>
-                <div className='font-weight-bold mt-2'>Client Name</div>
-                <div>Address</div>
-              </div>
-            </div>
-            <div className='p-4 d-flex align-items-start col-12 col-sm-6'>
-              <img src="/media/users/100_13.jpg" alt="" className="kt-img-rounded mr-4"/>
-              <div className='flex-grow-1 d-flex flex-column'>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla ante libero, porttitor quis tempus ac, porttitor eget dui. Vivamus sit amet tempus dui. Etiam velit libero, tincidunt vel dolor et.
-                </p>
-                <div className='font-weight-bold mt-2'>Client Name</div>
-                <div>Address</div>
-              </div>
-            </div>
-            <div className='p-4 d-flex align-items-start col-12 col-sm-6'>
-              <img src="/media/users/100_13.jpg" alt="" className="kt-img-rounded mr-4"/>
-              <div className='flex-grow-1 d-flex flex-column'>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla ante libero, porttitor quis tempus ac, porttitor eget dui. Vivamus sit amet tempus dui. Etiam velit libero, tincidunt vel dolor et.
-                </p>
-                <div className='font-weight-bold mt-2'>Client Name</div>
-                <div>Address</div>
-              </div>
-            </div>
-            <div className='p-4 d-flex align-items-start col-12 col-sm-6'>
-              <img src="/media/users/100_13.jpg" alt="" className="kt-img-rounded mr-4"/>
-              <div className='flex-grow-1 d-flex flex-column'>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla ante libero, porttitor quis tempus ac, porttitor eget dui. Vivamus sit amet tempus dui. Etiam velit libero, tincidunt vel dolor et.
-                </p>
-                <div className='font-weight-bold mt-2'>Client Name</div>
-                <div>Address</div>
-              </div>
-            </div>
+            {
+              lawyersList.length === 0 ? <h5 className='text-center w-100 p-5'>Nothing Found!</h5>
+                : lawyersList.sort((a, b) => getRatings(b.lawyer_details.reviews) - getRatings(a.lawyer_details.reviews))
+                  .map((lawyer, i) => {
+                    const review = lawyer.lawyer_details.reviews.sort((a, b) => parseInt(b.rating, 10) - parseInt(a.rating, 10) )[0]
+                    if (1<4) {
+                      if (review) {
+                        return (
+                          <div className='p-4 d-flex align-items-start col-12 col-sm-6 '>
+                            <img
+                              className="kt-img-rounded mr-4"
+                              width={95}
+                              height={95}
+                              src={
+                                review?.reviewedBy?.profileImage?.filename
+                                  ? `/images/${review?.reviewedBy?.profileImage.filename}`
+                                  : "/media/users/100_13.jpg"
+                              }
+                              alt={review?.reviewedBy?.firstName}
+                            />
+                            <div className='flex-grow-1 d-flex flex-column'>
+                              <p>{review.text}</p>
+                              <div className='font-weight-bold mt-2'>{`${review.reviewedBy.firstName} ${review.reviewedBy.lastName}`}</div>
+                              <div>{review.reviewedBy.address}</div>
+                            </div>
+                          </div>
+                        )
+                      } else {
+                        return (<h5 className='text-center w-100 p-5'>Nothing Found!</h5>)
+                      }
+
+                    }
+                  })
+            }
+
           </div>
 
         </div>
