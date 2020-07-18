@@ -1,20 +1,54 @@
 /* eslint-disable no-script-url,jsx-a11y/anchor-is-valid */
-import React from "react";
-import { Link } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {Link} from "react-router-dom";
 import Dropdown from "react-bootstrap/Dropdown";
-import { connect } from "react-redux";
-import { toAbsoluteUrl } from "../../../_metronic";
+import {connect, useSelector} from "react-redux";
+import {toAbsoluteUrl} from "../../../_metronic";
 import HeaderDropdownToggle from "../content/CustomDropdowns/HeaderDropdownToggle";
 
-class UserProfile extends React.Component {
-  render() {
-    const { user } = this.props;
+function UserProfile(props) {
+  // const {user} = props;
+  const {chat, user} = useSelector(
+    ({chat, auth: {user}}) => ({
+      chat,
+      user
+    })
+  );
+  const [unseen, setUnseen] = useState(false)
+  const unseenMsg = (chatList) => {
+    let bool = false
+    chatList.map(list => {
+      list.messages.map(msg => {
+        if (msg.receiver?._id === user._id && !msg.seen) {
+          bool = true
+        }
+      })
+    })
+    return bool
+  }
+  useEffect(() => {
+    if (unseenMsg(chat.chatList)) {
+      setUnseen(true)
+    } else {
+      setUnseen(false)
+    }
+  }, [chat])
+  return (
+    <>
 
-    return (
-      <>
-        <div className='d-flex align-items-center mr-3'>
-          <i className="fa fa-comment"/>
+        <div className='d-flex align-items-center justify-content-center mr-3 '>
+          <div className='position-relative'>
+            <Link to='/chat'>
+              <i className="fa fa-comment kt-icon-lg"/>
+            </Link>
+            {
+              unseen && <i className='fa fa-dot-circle kt-icon-sm text-danger position-absolute' style={{top: -10, right: -5}}/>
+            }
+          </div>
+
         </div>
+
+
 
       <Dropdown
         className="kt-header__topbar-item kt-header__topbar-item--user"
@@ -39,15 +73,18 @@ class UserProfile extends React.Component {
               </span>
 
               {
-                user.profileImage && user.profileImage.filename ? <img alt="Pic" src={`/images/${user.profileImage.filename}`} />
-                : <span className="kt-badge kt-badge--username kt-badge--unified-success kt-badge--lg kt-badge--rounded kt-badge--bold">
+                user.profileImage && user.profileImage.filename ?
+                  <img alt="Pic" src={`/images/${user.profileImage.filename}`}/>
+                  : <span
+                    className="kt-badge kt-badge--username kt-badge--unified-success kt-badge--lg kt-badge--rounded kt-badge--bold">
                     <b>{user && user.firstName[0]}</b>
                   </span>
               }
             </div>
           </div>
         </Dropdown.Toggle>
-        <Dropdown.Menu className="dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-top-unround dropdown-menu-xl">
+        <Dropdown.Menu
+          className="dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-top-unround dropdown-menu-xl">
           {/** ClassName should be 'dropdown-menu dropdown-menu-fit dropdown-menu-right dropdown-menu-anim dropdown-menu-top-unround dropdown-menu-xl' */}
           <div
             className="kt-user-card kt-user-card--skin-dark kt-notification-item-padding-x"
@@ -57,7 +94,8 @@ class UserProfile extends React.Component {
           >
             <div className="kt-user-card__avatar">
               {
-                user.profileImage && user.profileImage.filename ? <img alt="Pic" src={`/images/${user.profileImage.filename}`} />
+                user.profileImage && user.profileImage.filename ?
+                  <img alt="Pic" src={`/images/${user.profileImage.filename}`}/>
                   : <span className="kt-badge kt-badge--lg kt-badge--rounded kt-badge--bold kt-font-success">
                 {user && user.firstName[0]}
               </span>
@@ -69,7 +107,7 @@ class UserProfile extends React.Component {
           <div className="kt-notification">
             <Link to={'/account'} className="kt-notification__item">
               <div className="kt-notification__item-icon">
-                <i className="flaticon2-calendar-3 kt-font-success" />
+                <i className="flaticon2-calendar-3 kt-font-success"/>
               </div>
               <div className="kt-notification__item-details">
                 <div className="kt-notification__item-title kt-font-bold">
@@ -91,9 +129,8 @@ class UserProfile extends React.Component {
           </div>
         </Dropdown.Menu>
       </Dropdown>
-        </>
-    );
-  }
+    </>
+  );
 }
 
 const mapStateToProps = ({ auth: { user } }) => ({

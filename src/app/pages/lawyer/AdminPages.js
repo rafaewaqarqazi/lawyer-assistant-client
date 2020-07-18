@@ -21,7 +21,6 @@ export default function AdminPages() {
         <AdminRoute path="/dashboard" component={Dashboard} />
         <AdminRoute path="/cases" component={Cases} exact/>
         <AdminRoute path="/cases/details/:caseId" component={CaseDetails} exact/>
-        <AdminRoute path="/cases/hearings/:caseId" component={Cases} exact/>
         <AdminRoute path="/clients/:clientId" component={Clients} exact/>
         <AdminRoute path="/clients" component={Clients} exact/>
         <AdminRoute path="/account" component={Account} exact/>

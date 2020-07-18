@@ -11,7 +11,7 @@ import * as caseReducer from "../../../store/ducks/cases.duck";
 import PaginationComponent from "../../../Components/PaginationComponent";
 import Filters from "../../../Components/Filters";
 import {getAllCases} from "../../../crud/user.crud";
-const Cases = ({casesList, user, addCases, casesLoading, updateCase}) => {
+const Cases = ({casesList, user, addCases, casesLoading, updateCase, userType = 'lawyer'}) => {
   const history = useHistory()
   const [show, setShow] = useState(false);
   const [caseId, setCaseId] = useState('');
@@ -25,7 +25,7 @@ const Cases = ({casesList, user, addCases, casesLoading, updateCase}) => {
   })
 
   useEffect(() => {
-    getAllCases({userId: user._id, userType: 'lawyer'})
+    getAllCases({userId: user._id, userType})
       .then(result => {
         console.log('result', result)
         if (result.data.success) {
@@ -103,7 +103,7 @@ const Cases = ({casesList, user, addCases, casesLoading, updateCase}) => {
             <tr>
               <th>#</th>
               <th>Title</th>
-              <th>Client</th>
+              <th >{userType === 'lawyer' ? 'Client' : 'Lawyer'}</th>
               <th>Next Hearing</th>
               <th>Total Hearings</th>
               <th>Status</th>
@@ -121,7 +121,7 @@ const Cases = ({casesList, user, addCases, casesLoading, updateCase}) => {
                     <tr key={i} style={{cursor:'pointer'}} onClick={() => history.push(`/cases/details/${caseDetails._id}`)}>
                       <td>{i+1}</td>
                       <td>{caseDetails.details.title}</td>
-                      <td>{`${caseDetails.client?.firstName} ${caseDetails.client?.lastName}`}</td>
+                      <td>{`${caseDetails[userType === 'lawyer' ? 'client' : 'lawyer']?.firstName} ${caseDetails[userType === 'lawyer' ? 'client' : 'lawyer']?.lastName}`}</td>
                       <td>{caseDetails.details.hearings.sort((a, b) => new Date(a.date) - new Date(b.date))[0]?.date ? moment(caseDetails.details.hearings.sort((a, b) => new Date(a.date) - new Date(b.date))[0]?.date).format('DD/MM/YYYY') : 'N/A'}</td>
                       <td>{caseDetails.details.hearings.length}</td>
                       <td>{caseDetails.details.status || 'In Progress'}</td>

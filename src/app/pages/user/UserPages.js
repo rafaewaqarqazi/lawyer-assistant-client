@@ -13,6 +13,10 @@ import LawyerDetails from "../../Components/users/LawyerDetails";
 import LawyerList from "../lawyer/LawyersList";
 import ChatPage from "../ChatPage";
 import MyLawyers from "../../Components/users/MyLawyers";
+import AdminRoute from "../../router/AdminRoute";
+import Dashboard from "../lawyer/Dashboard";
+import Cases from "../lawyer/cases/cases";
+import CasesDetails from "../lawyer/cases/CaseDetails";
 
 const UserPages = () => {
   const { isAuthorized } = useSelector(
@@ -28,6 +32,11 @@ const UserPages = () => {
         <Route path="/" component={Home} exact/>
         { !isAuthorized && <Route path="/auth/login" component={Login} exact/>}
         { !isAuthorized && <Route path="/auth/registration" component={Registration} exact/>}
+        <UserRoute path="/dashboard" component={() => (
+          <UserLayout>
+            <KtContent><Dashboard userType='client'/></KtContent>
+          </UserLayout>
+        )} />
         <Route path="/lawyers/list" component={() => (
           <UserLayout>
             <KtContent><LawyerList/></KtContent>
@@ -36,6 +45,16 @@ const UserPages = () => {
         <UserRoute path="/lawyers/my" component={() => (
           <UserLayout>
             <KtContent><MyLawyers/></KtContent>
+          </UserLayout>
+        )} exact/>
+        <UserRoute path="/cases/my" component={() => (
+          <UserLayout>
+            <KtContent><Cases userType={'client'}/></KtContent>
+          </UserLayout>
+        )} exact/>
+        <UserRoute path="/cases/details/:caseId" component={() => (
+          <UserLayout>
+            <KtContent><CasesDetails/></KtContent>
           </UserLayout>
         )} exact/>
         <Route path="/lawyer/details/:lawyerId" component={() => (

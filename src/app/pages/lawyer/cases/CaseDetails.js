@@ -180,18 +180,18 @@ const CasesDetails = () => {
                     width={120}
                     height={120}
                     src={
-                      sCase.client?.profileImage?.filename
-                        ? `/images/${sCase.client.profileImage.filename}`
+                      sCase[user.role === '2' ? 'client' : 'lawyer']?.profileImage?.filename
+                        ? `/images/${sCase[user.role === '2' ? 'client' : 'lawyer'].profileImage.filename}`
                         : "/media/users/100_13.jpg"
                     }
-                    alt={sCase.client.firstName}
+                    alt={sCase[user.role === '2' ? 'client' : 'lawyer'].firstName}
                   />
                 </div>
                 <h5
                   style={{ textOverflow: "ellipsis" }}
                   className="mt-4 mb-2 text-nowrap overflow-hidden text-center letter-space-1"
                 >
-                  {`${sCase.client.firstName} ${sCase.client.lastName}`}
+                  {`${sCase[user.role === '2' ? 'client' : 'lawyer'].firstName} ${sCase[user.role === '2' ? 'client' : 'lawyer'].lastName}`}
                 </h5>
 
                 <div className="d-flex justify-content-between mb-3">
@@ -254,10 +254,14 @@ const CasesDetails = () => {
                       {hearing.description}
                     </div>
                   </ExpansionPanelDetails>
-                  <ExpansionPanelActions>
-                    <button disabled={hearing.status ? hearing.status !== '' : false} className="btn btn-label btn-sm" onClick={() => handleChangeStatus('No Result', hearing._id)}>No Result</button>
-                    <button disabled={hearing.status ? hearing.status !== '' : false} className="btn btn-label btn-sm" onClick={() => handleChangeStatus('Postponed', hearing._id)}>Postponed</button>
-                  </ExpansionPanelActions>
+                  {
+                    user.role === '2' &&
+                    <ExpansionPanelActions>
+                      <button disabled={(hearing.status ? hearing.status !== 'Pending' : false) || moment().isBefore(hearing.date)} className="btn btn-label btn-sm" onClick={() => handleChangeStatus('No Result', hearing._id)}>No Result</button>
+                      <button disabled={(hearing.status ? hearing.status !== 'Pending' : false) || moment().isBefore(hearing.date)} className="btn btn-label btn-sm" onClick={() => handleChangeStatus('Postponed', hearing._id)}>Postponed</button>
+                    </ExpansionPanelActions>
+                  }
+
                 </ExpansionPanel>
               ))
             }

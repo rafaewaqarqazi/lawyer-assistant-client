@@ -106,7 +106,15 @@ const MyLawyers = ({user, removeJob}) => {
                   .map((lawyer, i) => (
                     <tr key={i} className='table-row-center'>
                       <td>{i+1}</td>
-                      <td><img className='kt-badge kt-badge--md kt-img-rounded' src={`/images/${lawyer.profileImage?.filename}`}/></td>
+                      <td>
+                        {
+                          lawyer.profileImage?.filename ? <img alt="Pic" src={`/images/${lawyer.profileImage.filename}`} />
+                            : <span className="kt-badge kt-badge--username kt-badge--unified-success kt-badge--lg kt-badge--rounded kt-badge--bold">
+                    <b>{lawyer && lawyer.firstName[0]}</b>
+                  </span>
+                        }
+
+                      </td>
                       <td>{lawyer.firstName}</td>
                       <td>{lawyer.lastName}</td>
                       <td>{lawyer.email}</td>

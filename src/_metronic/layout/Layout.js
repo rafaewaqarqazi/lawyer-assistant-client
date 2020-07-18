@@ -92,7 +92,7 @@ function Layout({children, layoutConfig, history, addChats, chat, user, socket, 
 
 
           <main className={clsx(classes.content, classes.contentShift)}>
-            <KtContent>
+            <div className='container-md'>
               {
                 user.role === '2' && history.location.pathname !== '/account' ?
                   user.lawyer_details ?
@@ -108,7 +108,7 @@ function Layout({children, layoutConfig, history, addChats, chat, user, socket, 
                   : null
               }
               {children}
-            </KtContent>
+            </div>
           </main>
         </div>
 

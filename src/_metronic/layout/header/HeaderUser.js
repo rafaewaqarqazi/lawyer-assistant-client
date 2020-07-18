@@ -22,6 +22,14 @@ const HeaderUser = () => {
             isAuthorized &&
             <NavLink to="/lawyers/my" activeClassName='active' className="btn btn-link nav-link ml-3">My Lawyers</NavLink>
           }
+          {
+            isAuthorized &&
+            <NavLink to="/cases/my" activeClassName='active' className="btn btn-link nav-link ml-3">My Cases</NavLink>
+          }
+          {
+            isAuthorized &&
+            <NavLink to="/dashboard" activeClassName='active' className="btn btn-link nav-link ml-3">Dashboard</NavLink>
+          }
 
         </div>
       </div>

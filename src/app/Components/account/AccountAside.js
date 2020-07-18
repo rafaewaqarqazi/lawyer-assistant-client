@@ -1,6 +1,5 @@
 import React from "react";
 import { connect } from "react-redux";
-import {Server_URL} from "../../../utils/config";
 
 const AccountAside = ({ selected, setSelected, user }) => {
   return (
