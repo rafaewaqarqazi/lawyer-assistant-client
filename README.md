@@ -1,13 +1,12 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-Client for recruitment agency app in Reactjs and Redux
-## Setup
+Client for Lawyer Assistant app in Reactjs and Redux
 
-create a root directory `recruitment-agency`
+## Setup
+create a root directory `lawyer-assistant`
 and clone these two repositories in it
 
-`git clone https://github.com/rafaewaqarqazi/recruitment-agency-api.git`
+`git clone https://github.com/rafaewaqarqazi/lawyer-assistant-api.git`
 
-`git clone https://github.com/rafaewaqarqazi/recruitment-agency-client.git`
+`git clone https://github.com/rafaewaqarqazi/lawyer-assistant-client.git`
 ## Available Scripts
 
 In the project client directory, run:
