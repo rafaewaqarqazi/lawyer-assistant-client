@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { PortletBody, PortletFooter} from "../../partials/content/Portlet";
 import {connect} from "react-redux";
 import * as job from "../../store/ducks/jobs.duck";
@@ -6,7 +6,27 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Rating from '@material-ui/lab/Rating'
 import {Link} from "react-router-dom";
 import {getRatings} from "../../../utils";
+import {getAllCases} from "../../crud/user.crud";
 const LawyerCard = ({lawyer}) => {
+  const [cases, setCases] = useState([])
+  useEffect(() => {
+    getAllCases({userId: lawyer._id, userType: 'lawyer'})
+      .then(result => {
+        console.log('result', result)
+        if (result.data.success) {
+          setCases(result.data.cases)
+        } else {
+          console.log('Something went wrong')
+        }
+      })
+      .catch(error => console.log('error', error.message))
+  }, [])
+  const getNoOfActiveCases = () => {
+    return cases.filter(c => c.details?.status !== 'Completed').length
+  }
+  const getCompletedCases = () => {
+    return cases.filter(c => c.details?.status === 'Completed').length
+  }
   return (
     <>
       <Link to={`/lawyer/details/${lawyer._id}`} className="kt-portlet kt-portlet--border-bottom-brand text-decoration-none lawyer-card__scale-image" style={{cursor: 'pointer', color: 'inherit'}}>
@@ -33,6 +53,18 @@ const LawyerCard = ({lawyer}) => {
                 }
               </div>
             </div>
+            <div className='d-flex justify-content-between mb-3'>
+              <span className='font-weight-bold'>Active Cases:</span>
+              <span>
+                {getNoOfActiveCases()}/{cases.length}
+              </span>
+            </div>
+            <div className='d-flex justify-content-between mb-3'>
+              <span className='font-weight-bold'>Completed Cases:</span>
+              <span>
+                {getCompletedCases()}/{cases.length}
+              </span>
+            </div>
           </div>
 
         </PortletBody>
@@ -47,4 +79,4 @@ const LawyerCard = ({lawyer}) => {
   );
 };
 
-export default connect(null, job.actions)(LawyerCard);
+export default LawyerCard;

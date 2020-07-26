@@ -7,6 +7,7 @@ export const HIRE_LAWYER = '/api/users/lawyers/hire'
 export const REVIEW_LAWYER = '/api/users/lawyers/review'
 export const ADD_HEARING = '/api/cases/hearing/add'
 export const CHANGE_HEARING_STATUS = '/api/cases/hearing/status'
+export const COMPLETE_CASE = '/api/cases/complete'
 export function getAllLawyers() {
   return axios.get(GET_ALL_LAWYERS);
 }
@@ -25,6 +26,9 @@ export const submitReview = data => {
 }
 export const changeHearingStatus = data => {
   return axios.put(CHANGE_HEARING_STATUS, data);
+}
+export const completeCase = data => {
+  return axios.put(COMPLETE_CASE, data);
 }
 export const getAllCases = ({userId, userType}) => {
   return axios.get(`${GET_ALL_CASES}?userId=${userId}&userType=${userType}`);

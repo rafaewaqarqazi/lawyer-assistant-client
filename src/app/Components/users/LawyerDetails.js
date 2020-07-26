@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Redirect, useParams, useHistory, Link} from "react-router-dom";
 import { connect, useSelector } from "react-redux";
 import {
@@ -9,7 +9,7 @@ import Rating from "@material-ui/lab/Rating";
 import * as chat from "../../store/ducks/chat.duck";
 import * as lawyerReducer from "../../store/ducks/lawyers.duck";
 import {Alert, Button, Modal} from "react-bootstrap";
-import {hireLawyer, submitReview} from "../../crud/user.crud";
+import {getAllCases, hireLawyer, submitReview} from "../../crud/user.crud";
 import {getRatings} from "../../../utils";
 const LawyerDetails = ({addNewReceiver, addRoom, addReceiver, updateLawyer}) => {
   const params = useParams();
@@ -35,6 +35,19 @@ const LawyerDetails = ({addNewReceiver, addRoom, addReceiver, updateLawyer}) => 
       user
     })
   );
+  const [cases, setCases] = useState([])
+  useEffect(() => {
+    getAllCases({userId: params.lawyerId, userType: 'lawyer'})
+      .then(result => {
+        console.log('result', result)
+        if (result.data.success) {
+          setCases(result.data.cases)
+        } else {
+          console.log('Something went wrong')
+        }
+      })
+      .catch(error => console.log('error', error.message))
+  }, [])
   const handleClickMessage = () => {
     addRoom(null)
     addReceiver(null)
@@ -103,6 +116,12 @@ const LawyerDetails = ({addNewReceiver, addRoom, addReceiver, updateLawyer}) => 
           closeRes()
         })
     }
+  }
+  const getNoOfActiveCases = () => {
+    return cases.filter(c => c.details?.status !== 'Completed').length
+  }
+  const getCompletedCases = () => {
+    return cases.filter(c => c.details?.status === 'Completed').length
   }
   const lawyer = params.lawyerId
     ? lawyersList.filter(j => j._id === params.lawyerId).length > 0
@@ -199,6 +218,18 @@ const LawyerDetails = ({addNewReceiver, addRoom, addReceiver, updateLawyer}) => 
                     Location:
                   </span>
                   <span className="letter-space-1">{`${lawyer.address}, ${lawyer.country}`}</span>
+                </div>
+                <div className="d-flex justify-content-between mb-3">
+                  <span className="font-weight-bold letter-space-1">
+                    Active Cases:
+                  </span>
+                  <span className="letter-space-1">{getNoOfActiveCases()}/{cases.length}</span>
+                </div>
+                <div className="d-flex justify-content-between mb-3">
+                  <span className="font-weight-bold letter-space-1">
+                    Completed Cases:
+                  </span>
+                  <span className="letter-space-1">{getCompletedCases()}/{cases.length}</span>
                 </div>
                 <div className="d-flex justify-content-between mb-3">
                   <span className="font-weight-bold letter-space-1">

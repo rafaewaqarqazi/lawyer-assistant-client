@@ -1,17 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {Portlet, PortletBody, PortletHeader, PortletHeaderToolbar} from "../../../partials/content/Portlet";
+import {Portlet, PortletBody, PortletHeader} from "../../../partials/content/Portlet";
 import {Modal, Table, Alert} from 'react-bootstrap'
-import {Link, useHistory} from "react-router-dom";
+import { useHistory} from "react-router-dom";
 import {connect} from "react-redux";
-import {categories, departments, types} from "../../../../utils/job-post-data";
 import moment from 'moment'
 import {Tooltip} from "@material-ui/core";
-import {deleteJob} from "../../../crud/job.crud";
 import * as caseReducer from "../../../store/ducks/cases.duck";
 import PaginationComponent from "../../../Components/PaginationComponent";
-import Filters from "../../../Components/Filters";
-import {getAllCases} from "../../../crud/user.crud";
-const Cases = ({casesList, user, addCases, casesLoading, updateCase, userType = 'lawyer'}) => {
+import {getAllCases, completeCase} from "../../../crud/user.crud";
+const Cases = ({casesList, user, addCases, updateCases, userType = 'lawyer'}) => {
   const history = useHistory()
   const [show, setShow] = useState(false);
   const [caseId, setCaseId] = useState('');
@@ -48,8 +45,8 @@ const Cases = ({casesList, user, addCases, casesLoading, updateCase, userType = 
     setCaseId(id)
     setShow(true);
   }
-  const confirmDelete = () => {
-    deleteJob(caseId)
+  const confirmComplete = () => {
+    completeCase({caseId})
       .then(res => {
         if (!res.data.success) {
           setError({show: true, message: res.data.message})
@@ -57,13 +54,13 @@ const Cases = ({casesList, user, addCases, casesLoading, updateCase, userType = 
           closeAlert()
         } else {
           setSuccess({show: true, message: res.data.message})
+          updateCases(res.data.cases)
           handleClose()
-          // removeJob(caseId)
           closeAlert()
         }
       })
       .catch(error => {
-        setError({show: true, message: 'Could not delete Job Post'})
+        setError({show: true, message: 'Could not perform this action'})
         handleClose()
         closeAlert()
       })
@@ -107,6 +104,7 @@ const Cases = ({casesList, user, addCases, casesLoading, updateCase, userType = 
               <th>Next Hearing</th>
               <th>Total Hearings</th>
               <th>Status</th>
+              {userType === 'lawyer' && <th>Actions</th>}
             </tr>
             </thead>
             <tbody>
@@ -118,24 +116,31 @@ const Cases = ({casesList, user, addCases, casesLoading, updateCase, userType = 
                 : filteredData
                   .slice((pageNo - 1) * perPage, ((pageNo - 1) * perPage) + perPage <= casesList.length ? ((pageNo - 1) * perPage) + perPage : casesList.length)
                   .map((caseDetails, i) => (
-                    <tr key={i} style={{cursor:'pointer'}} onClick={() => history.push(`/cases/details/${caseDetails._id}`)}>
+                    <tr key={i} style={{cursor:'pointer'}} onClick={() => userType !== 'lawyer' ? history.push(`/cases/details/${caseDetails._id}`) : {}} >
                       <td>{i+1}</td>
                       <td>{caseDetails.details.title}</td>
                       <td>{`${caseDetails[userType === 'lawyer' ? 'client' : 'lawyer']?.firstName} ${caseDetails[userType === 'lawyer' ? 'client' : 'lawyer']?.lastName}`}</td>
                       <td>{caseDetails.details.hearings.sort((a, b) => new Date(a.date) - new Date(b.date))[0]?.date ? moment(caseDetails.details.hearings.sort((a, b) => new Date(a.date) - new Date(b.date))[0]?.date).format('DD/MM/YYYY') : 'N/A'}</td>
                       <td>{caseDetails.details.hearings.length}</td>
-                      <td>{caseDetails.details.status || 'In Progress'}</td>
-                      {/*<td>{moment(caseDetails.dueDate).format('DD/MM/YYYY')}</td>*/}
-                      {/*<td>*/}
-                      {/*  <Tooltip title='Edit Post' placement='top'>*/}
-                      {/*    <Link to={`/caseDetailss/edit/${caseDetails._id}`}>*/}
-                      {/*      <i className='fa fa-pencil-alt mr-4'/>*/}
-                      {/*    </Link>*/}
-                      {/*  </Tooltip>*/}
-                      {/*  <Tooltip title='Delete Post' placement='top'>*/}
-                      {/*    <i className='fa fa-minus-circle' style={{color: 'red'}} onClick={() => handleShow(caseDetails._id)}/>*/}
-                      {/*  </Tooltip>*/}
-                      {/*</td>*/}
+                      <td>{caseDetails.details.status || 'On-Going'}</td>
+                      {userType === 'lawyer' && <td >
+                        <Tooltip title='Case Details' placement='top'>
+                          <i className='fa fa-info-circle text-info mr-3 fa-lg'
+                             onClick={() => history.push(`/cases/details/${caseDetails._id}`)}/>
+                        </Tooltip>
+                        <Tooltip title='Complete Case' placement='top'>
+                          <span>
+                           <button
+                             className='btn btn-icon'
+                             onClick={() => handleShow(caseDetails._id)}
+                             disabled={caseDetails.details.status === 'Completed'}
+                           >
+                             <i className='fa fa-check-circle text-success fa-lg' />
+                           </button>
+                          </span>
+
+                        </Tooltip>
+                      </td>}
                     </tr>
                   ))
             }
@@ -152,15 +157,15 @@ const Cases = ({casesList, user, addCases, casesLoading, updateCase, userType = 
       </Portlet>
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Delete Job</Modal.Title>
+          <Modal.Title>Complete Case</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure you want to delete this job post?</Modal.Body>
+        <Modal.Body>Are you sure you want to complete this case?</Modal.Body>
         <Modal.Footer>
           <button className='btn btn-primary btn-sm' onClick={handleClose}>
             Close
           </button>
-          <button className='btn btn-danger btn-sm' onClick={confirmDelete}>
-            Delete
+          <button className='btn btn-success btn-sm' onClick={confirmComplete}>
+            Complete Now
           </button>
         </Modal.Footer>
       </Modal>
