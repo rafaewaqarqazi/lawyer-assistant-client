@@ -52,7 +52,7 @@ function Registration({ intl }) {
                 confirmPassword: "",
                 mobileNo: "",
                 role: "",
-                agree: ""
+                agree: false
               }}
               validate={values => validateRegistration(values, current)}
               validateOnChange={false}
@@ -138,7 +138,7 @@ function Registration({ intl }) {
                           <RegistrationWirzardFormAddress errors={errors} />
                         )}
                         {current === 3 && (
-                          <RegistrationWizardFormConfirm errors={errors} />
+                          <RegistrationWizardFormConfirm errors={errors} values={values} setFieldValue={setFieldValue}/>
                         )}
                         <RegistrationWizardActions
                           current={current}

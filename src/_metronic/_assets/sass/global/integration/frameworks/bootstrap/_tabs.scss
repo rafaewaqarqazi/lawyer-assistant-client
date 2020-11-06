@@ -7,7 +7,7 @@
 // Tabs
 .nav-pills,
 .nav-tabs {
-	margin: 0 0 25px 0;   
+	margin: 0 0 25px 0;
 
 	.nav-item {
 		.nav-link {
@@ -22,10 +22,10 @@
 			i {
 				vertical-align: middle;
 				line-height: 0;
-				display: inline-block;  
+				display: inline-block;
 				margin-right: 0.5rem;
-			}     
-			
+			}
+
 			&.active,
 			&:active,
 			&:hover {
@@ -40,11 +40,11 @@
 	.nav-item {
 		.nav-link {
 			color: kt-brand-color();
-			
+
 			i {
 				color: kt-brand-color();
-			}     
-			
+			}
+
 			&.active,
 			&:active,
 			&:hover {
@@ -122,7 +122,7 @@
 	// Label style
 	&.nav-pills-label {
 		.nav-item {
-	
+
 			.nav-link {
 				&:active,
 				&.active,
@@ -131,7 +131,7 @@
 					color: kt-brand-color();
 				}
 			}
-	
+
 			&.show > .nav-link {
 				background-color: rgba(kt-brand-color(), 0.1);
 				color: kt-brand-color();

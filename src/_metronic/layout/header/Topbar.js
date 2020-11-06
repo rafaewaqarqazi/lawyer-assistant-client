@@ -16,8 +16,8 @@ const Topbar = () => {
       {
         isAuthorized ? <UserProfile/> :
           <div className='d-flex align-items-center'>
-            <NavLink to="/auth/login" className="btn btn-success btn-sm ml-3">Login</NavLink>
-            <NavLink to="/auth/registration" className="btn btn-primary btn-sm ml-3 mr-5">Sign Up</NavLink>
+            <NavLink to="/auth/login" className="header-link  ml-3">Login</NavLink>
+            <NavLink to="/auth/registration" className="header-link ml-3 mr-5">Sign Up</NavLink>
           </div>
       }
 

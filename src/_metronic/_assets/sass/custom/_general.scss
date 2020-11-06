@@ -26,3 +26,49 @@
   max-height: 350px;
   overflow-y: auto;
 }
+.header-link{
+  text-decoration: none;
+  color: $text-muted;
+  position: relative;
+  padding: 15px 20px;
+  font-size: 15px;
+  text-align: center;
+  font-weight: 600;
+  &:before{
+    content: '';
+    position: absolute;
+    height: 2px;
+    width: 0;
+    bottom: 0;
+    right: 0;
+    background-color: $primary;
+    transition: all 0.3s ease-in;
+  }
+  &:hover {
+    color: $dark;
+    &:before{
+      content: '';
+      position: absolute;
+      height: 2px;
+      width: 100%;
+      bottom: 0;
+      left: 0;
+      background-color: $primary;
+      transition: all 0.3s ease-in;
+    }
+  }
+  &.active{
+    color: $dark;
+    &:before{
+      content: '';
+      position: absolute;
+      height: 2px;
+      width: 100%;
+      bottom: 0;
+      left: 0;
+      background-color: $primary;
+      transition: all 0.3s ease-in;
+    }
+  }
+}
+

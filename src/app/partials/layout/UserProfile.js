@@ -39,7 +39,7 @@ function UserProfile(props) {
         <div className='d-flex align-items-center justify-content-center mr-3 '>
           <div className='position-relative'>
             <Link to='/chat'>
-              <i className="fa fa-comment kt-icon-lg"/>
+              <i className="fa fa-comment text-muted kt-icon-lg"/>
             </Link>
             {
               unseen && <i className='fa fa-dot-circle kt-icon-sm text-danger position-absolute' style={{top: -10, right: -5}}/>

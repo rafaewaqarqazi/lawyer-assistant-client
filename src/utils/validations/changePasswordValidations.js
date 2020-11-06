@@ -7,7 +7,7 @@ export const changePasswordValidations = values => {
 
   if (!values.newPassword) {
     errors.newPassword = 'Required!'
-  } else if (!values.newPassword.match(/^(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)) {
+  } else if (!values.newPassword.match(/^(?=.*[A-Z])(?=.*\d)[a-zA-Z\d\W]{8,}$/)) {
     errors.newPassword = 'Invalid Password!'
   }
   if (!values.confirmPassword) {

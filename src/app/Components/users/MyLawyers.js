@@ -74,7 +74,7 @@ const MyLawyers = ({user, removeJob}) => {
       <Alert show={error.show} variant="danger">{error.message}</Alert>
       <Portlet className="kt-portlet--height-fluid-half kt-portlet--border-bottom-brand">
         <PortletHeader
-          title='My Clients'
+          title='My Lawyers'
 
         />
         <PortletBody>
@@ -99,7 +99,7 @@ const MyLawyers = ({user, removeJob}) => {
             {
               filteredData.length === 0
                 ? <tr >
-                  <td colSpan={8} style={{textAlign: 'center'}}>No Clients Found</td>
+                  <td colSpan={8} style={{textAlign: 'center'}}>No Lawyer Found</td>
                 </tr>
                 : filteredData
                   .slice((pageNo - 1) * perPage, ((pageNo - 1) * perPage) + perPage <= lawyers.length ? ((pageNo - 1) * perPage) + perPage : lawyers.length)
